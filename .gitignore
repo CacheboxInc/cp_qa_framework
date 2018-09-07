@@ -1,0 +1,7 @@
+#Ignore All CP Framework logs.
+*.log
+logs_tcs/mrc_logs/*
+status_mgmt_report/*
+*.pyc
+**/tools/*
+**/*.logs

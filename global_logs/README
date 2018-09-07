@@ -1,0 +1,10 @@
+As a common distrubted framework, there are number of hosts, individual tests, product logs, environment logs & 
+automation framework logs itself. Logging, reporting and eliminating false postives are important design considerations for a 
+Test framework.
+
+1). The logs are created per run and previous runs are archieved and dated in this folder.
+2). The structures of log directory is dynamically generated and depends on the options provided to test_runner.py
+3). Python multiprocessing is utlised for parallel running of unit tests, the framework implements process level logging for better logging.
+4). The framework does distributed log collection to central place and log analysis. This hels to eliminate false positive and test framework failures itself.
+
+The typical log directory will look this : 

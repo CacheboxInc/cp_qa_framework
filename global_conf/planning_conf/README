@@ -1,0 +1,18 @@
+When test frameworks are test test environment aware, they are truly portable and usuable by everyone, following framework features need to be provided :
+
+1). Create and Destroy test setups : 
+Given n number of host IPs, the framework should be able to dynamically create test environment, specific to test cases.
+The framework should read from setup config and do the necessary work. 
+This will provide maximum flexibility and portability for unit, ui and integration testing.
+
+2). Assume test setups :
+Use existing setups to executing all applicable test cases. 
+The test infrastructure should not be a limitation. Framework should execute a minimum set of TCs, with given infra resources and 
+not just fail.
+
+3). Docker based test setups :
+There is an opportunity to build a docker container based unit, integration testing setup support.
+CP scalibility testing is already docker based and using locust in master slave config with kubernetes.
+
+NOTE : Current focus
+Till the 2.7 APA release, #2 is the focus of implementation.  
