@@ -1,0 +1,60 @@
+CP Automation framework Design Considerations : 
+
+## Most important : 
+1). Config file driven design : Minimal or no code change for adding new TCs.
+
+2). Using Modular and procedural programming paradigms and Not OO, for the sake of 
+Maintainability, Extendibility & reusuability.
+
+3). Choice of Framework :
+Keepting it slim for now. As a common CP test framework, it needs to be very flexible.
+Adopting/Adhering to one framework, for now, will be limiting, to start.
+
+Even as the present requirement is REST based, the framework needs to support CLI, REST and GUI too.
+pytest, is a good option to consider once this frmaework matures. pytest provides porting as a feature.
+The present design considerations are in tune to adoptability of pytest. This should simply be a wrapper.
+
+Present choice is to run with a bar minimum framework structure to provide maximum abstraction and encapsulation from
+framework logic.
+
+4). Scale In and Scale Out Framework support :
+Parallel remote execution support for disparate command sets. 
+
+------------------------------------------------------------------------------------------------
+
+usage: test_runner.py [-h] [--mrc] [--planning] [-u] [--scalability] [-rcm]
+                      [-p] [-sc] [-b] [-f] [-s] [-n] [-r LISTOFTESTS] [-d]
+
+CP Automation test manager, At your service !
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --unit                This option will Run all CP Unit tests.
+                        The latest git unit test code is checked out. Use --runtests, --hosts & --duration
+                        NOTE : Run --unit --showconfig to Get You Started, with a dry run.
+
+  --ui            	Run the UI test cases of the PC using selenium
+
+  --scalability         CP scalibility tests are run using Locust tool.
+                        Use this option for stress tests and to setup test bed.
+  -rcm, --recommendations
+                        TBD: Include recommendations, benefits TCs here.
+  -p, --performance     TBD: Run performance tests
+
+  -sc, --showconfig     DryRun: Show the default config values being used for the test.
+  -b, --burstmode       This is scale-in/out framework mode running tests concurrently on localhost
+                        and distributing among all test slaves. This option is experimental and optional.
+                        NOTE: Unit component tests are good candidates for this option.
+  -f, --failfirst       By Default, the framework will abort at the first failure.
+                        Use this flag to ignore TC failures and execute entire suite.
+
+  -s, --showTC          TBD: Describe the given TCs and its coverage areas.
+  -n, --newsetup        TBD: Create new setup for the test suite as specified in config file.
+                        DEFAULT is to use the existing setup. The framework will discover and populate
+                        required infra info from host.
+  -r LISTOFTESTS, --runtests LISTOFTESTS
+                        This option helps to run specific TCs, range of TCs and All TCs.
+                        Ex: --runtest all(Default), Or --runtest TC1,TC2,TC3
+  -d, --duration        TBD: Specify the duration of test run.
+                        Ex: --duration 12mintues, --duration 1hour, --duration 1day
+-------------------------------------------------------------------------------------------------------
