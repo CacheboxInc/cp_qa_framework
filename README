@@ -22,7 +22,7 @@ Parallel remote execution support for disparate command sets.
 
 ------------------------------------------------------------------------------------------------
 
-usage: test_runner.py [-h] [--mrc] [--planning] [-u] [--scalability] [-rcm]
+usage: test_runner.py [-h] [--unit] [--sanity] [-ui] [--scalability] [-rcm]
                       [-p] [-sc] [-b] [-f] [-s] [-n] [-r LISTOFTESTS] [-d]
 
 CP Automation test manager, At your service !
