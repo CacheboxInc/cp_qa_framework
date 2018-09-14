@@ -24,6 +24,7 @@ import sys
 # Test Framework Libraries
 from unit_suite.lib_tcs import unit_tests
 from ui_suite.lib_tcs import ui_tests
+from sanity_suite.lib_tcs import sanity_tests
 import cp_global
         
 # Why am i spending so much time on help messages ? USUABILITY
@@ -40,7 +41,8 @@ def main():
                                 At your service !" ,formatter_class=RawTextHelpFormatter)
         parser.add_argument("--unit", help = "This option will Run all CP Unit tests. \
                                 \nThe latest git unit test code is checked out. Use --runtests, --hosts & --duration \
-                                \nNOTE : Beginners, please pay attention error messages to Get You Started.\n\n", action="store_true")
+                            \nNOTE : Beginners, please pay attention error messages to Get You Started.\n\n", action="store_true")
+        parser.add_argument("--sanity", help = "This option will Run all CP sanity tests.\n\n", action="store_true")
         parser.add_argument("--scalability", help = "CP scalibility tests are run using Locust tool. \
                                 \nUse this option for stress tests and to setup test bed.\n\n", action="store_true")
         parser.add_argument("--ui", help="It runs UI test cases using selenium.\n\n", action="store_true")
@@ -64,6 +66,9 @@ def main():
         if args.unit:
                 print ("Call unit test cases related test cases\n")
                 unit_tests.init_unit()
+        elif args.sanity:
+                print (" Call Sanity related test cases\n")
+                sanity_tests.init_sanity()
         elif args.ui:
                 print (" Call UI related test cases\n")
                 ui_tests.init_ui()

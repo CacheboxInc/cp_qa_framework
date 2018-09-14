@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import cp_global
-#import unit_test_common_utils
+#import sanity_test_common_utils
 #import pp
 import logging
 import colorlog
@@ -14,15 +14,15 @@ from configparser import SafeConfigParser
 
 cwd = os.getcwd()
 config = SafeConfigParser()
-config_file = os.getcwd()+"/unit_suite/conf_tcs/unit_setup.conf"
+config_file = os.getcwd()+"/sanity_suite/conf_tcs/sanity_setup.conf"
  
 start_time = strftime("%Y%m%d%H%M", gmtime())
 
 # Read the test setup details specfic test cases.
 
 
-def init_unit():
-    # TBD : Move this to common framework lib and pass flags like mrc, unit etc.
+def init_sanity():
+    # TBD : Move this to common framework lib and pass flags like mrc, sanity etc.
     # Depending on flags make logging specific to that test option.
     logger = get_logger()
     # Phase 1: MRC Test bed/environment configuration validation.
@@ -43,7 +43,7 @@ def run_tests():
         report_dir = config.get('setup', 'report_location')
         node = config.get('setup', 'node')
         report_file = os.getcwd()+report_dir+start_time+".html"
-        logger.info("Running test Unit test cases")
+        logger.info("Running test sanity test cases")
         logger.info("test case directory : %s",tc_dir)
 	##Calling pytest function for executing the test
         os.system("python3 -m pytest %s -s -v --tb=line  --html=%s -n %s" % (tc_dir , report_file , node ))
@@ -53,7 +53,7 @@ def run_tests():
 def get_logger():
 
         global logger
-        path = os.getcwd() + "/unit_suite/logs_tcs/"
+        path = os.getcwd() + "/sanity_suite/logs_tcs/"
         #from logging.handlers import TimedRotatingFileHandler
         #logger = TimedRotatingFileHandler(LOG_FILE, when=LOG_ROTATION_TIME)
         # __name__ is a better choice as one exactly which module called logger.
@@ -62,9 +62,9 @@ def get_logger():
 
         # Unique name for each run of mrc tests.
         nowtime = strftime("%Y-%m-%d-%H-%M", gmtime())
-        path = path + "Unit-Tests" + nowtime + ".log"
-        global unit_log_name
-        unit_log_name = path
+        path = path + "sanity-Tests" + nowtime + ".log"
+        global sanity_log_name
+        sanity_log_name = path
         handler = logging.FileHandler(path)
         handler.setLevel(logging.INFO)
 
@@ -92,6 +92,6 @@ def get_logger():
         consoleHandler.setFormatter(formatter)
         logger.addHandler(consoleHandler)
 
-        logger.info("Setting up and Returning MRC test suite logger")
+        logger.info("Setting up and Returning Sanity test suite logger")
         return logger
 
