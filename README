@@ -34,6 +34,8 @@ optional arguments:
                         NOTE : Run --unit --showconfig to Get You Started, with a dry run.
 
   --ui            	Run the UI test cases of the PC using selenium
+  
+  --sanity            	Run the sanity test cases , make sure config file of sanity suite is updated
 
   --scalability         CP scalibility tests are run using Locust tool.
                         Use this option for stress tests and to setup test bed.
