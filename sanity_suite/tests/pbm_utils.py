@@ -13,7 +13,7 @@ import ssl
 import time
 from sanity_suite.conf_tcs.config import *
 from sanity_suite.lib_tcs.utils import *
-from unit_suite.tests.vim_utils import *
+from sanity_suite.tests.vim_utils import *
 #from supervisor.utils.config import *
 
 #from helpers.common import *

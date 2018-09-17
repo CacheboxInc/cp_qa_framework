@@ -1,6 +1,6 @@
 import getopt
 from sanity_suite.conf_tcs.config import *
-from unit_suite.tests.utils import *
+from sanity_suite.tests.utils import *
 """config_file, args = get_config_file(sys.argv)
 config = __import__(config_file)
 for member_name in dir(config):

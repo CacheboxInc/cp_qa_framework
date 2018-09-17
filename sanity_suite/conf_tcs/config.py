@@ -22,6 +22,15 @@ from email.mime.text import MIMEText
 
 from logging.handlers import TimedRotatingFileHandler
 
+##For Test set up
+REPORT_DIR = "/sanity_suite/logs_tcs/"
+TC_DIR = "/sanity_suite/tests/"
+XML_REPORT_DIR = "/sanity_suite/logs_tcs/"
+# Number of worker for parallel execution
+NODES = 2
+
+
+
 ##For logging
 log_info = logging.INFO
 log_debug = logging.DEBUG
@@ -32,7 +41,7 @@ formatter1 = logging.Formatter('%(asctime)-15s - %(name)s - %(levelname)s - %(me
 formatter2 = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
 # logging for profiler
 logger = logging.getLogger("pioqa-cp")
-logger.setLevel(log_debug)
+logger.setLevel(log_info)
 dlr = TimedRotatingFileHandler(LOG_FILE, when=LOG_ROTATION_TIME)
 dlr.setLevel(log_debug)
 dlr.setFormatter(formatter1)
@@ -53,6 +62,8 @@ APP_PASSWORD = "admin@123"
 #VCENTER_PASSWORD = "Root@123"
 #VCENTER_CLUSTER = "Cluster"
 #VC_TYPE = 0
+
+# On-prem details
 
 VCENTER_IP = "10.10.8.58"
 VCENTER_USERNAME = "administrator@vsphere.local"

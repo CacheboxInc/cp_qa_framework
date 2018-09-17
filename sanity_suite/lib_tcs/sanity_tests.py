@@ -9,8 +9,7 @@ import colorlog
 import time
 from time import strftime, gmtime
 from configparser import SafeConfigParser
-
-
+from sanity_suite.conf_tcs.config import *
 
 cwd = os.getcwd()
 config = SafeConfigParser()
@@ -23,9 +22,8 @@ start_time = strftime("%Y%m%d%H%M", gmtime())
 
 def init_sanity():
     # TBD : Move this to common framework lib and pass flags like mrc, sanity etc.
-    # Depending on flags make logging specific to that test option.
-    logger = get_logger()
-    # Phase 1: MRC Test bed/environment configuration validation.
+    
+    # Phase 1: Test bed/environment configuration validation.
     #deploy_test_vms(logger)
     # Phase 2: We now have a test bed to execute MRC test cases.
     run_tests()
@@ -38,21 +36,23 @@ def init_sanity():
 
 ##common function to start execution.
 def run_tests():
-        config.read(config_file)
-        tc_dir = cwd+config.get('setup', 'tc_dir')
-        report_dir = config.get('setup', 'report_location')
-        node = config.get('setup', 'node')
-        report_file = os.getcwd()+report_dir+start_time+".html"
+        #config.read(config_file)
+        #tc_dir = cwd+config.get('setup', 'tc_dir')
+        #report_dir = config.get('setup', 'report_location')
+        xml_report_dir = cwd + XML_REPORT_DIR + start_time+".xml"
+
+        #node = config.get('setup', 'node')
+        report_file = os.getcwd() + REPORT_DIR + start_time +".html"
         logger.info("Running test sanity test cases")
-        logger.info("test case directory : %s",tc_dir)
+        logger.info("test case directory : %s", cwd+TC_DIR)
 	##Calling pytest function for executing the test
-        os.system("python3 -m pytest %s -s -v --tb=line  --html=%s -n %s" % (tc_dir , report_file , node ))
+        os.system("python3 -m pytest %s -s -v --tb=line  --html=%s -n %s --junitxml=%s" % (cwd+TC_DIR , report_file , NODES , xml_report_dir  ))
 
 # Currently, logging happens at the test suite level.
 # TBD : TC Level logging and process level logging
 def get_logger():
 
-        global logger
+        #global logger
         path = os.getcwd() + "/sanity_suite/logs_tcs/"
         #from logging.handlers import TimedRotatingFileHandler
         #logger = TimedRotatingFileHandler(LOG_FILE, when=LOG_ROTATION_TIME)

@@ -5,3 +5,6 @@ status_mgmt_report/*
 *.pyc
 **/tools/*
 **/*.logs
+**/result.txt
+**/*.xml
+.pytest/**

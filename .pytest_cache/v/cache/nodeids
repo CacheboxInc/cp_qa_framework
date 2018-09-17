@@ -1,4 +1,0 @@
-[
-  "ui_suite/tests/test_login.py::test_login_with_valid_credentials",
-  "ui_suite/tests/test_login.py::test_login_with_invalid_credentials"
-]

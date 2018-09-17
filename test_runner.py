@@ -61,7 +61,9 @@ def main():
 
         args = parser.parse_args()
 
-        # Set the global, these are required to make intelligent choices in life.
+        #Installing dependecies using pip
+        #TBD Install those tools which are required for test suite to run
+        os.system("pip3 install -r tools/requirements.txt")
 
         if args.unit:
                 print ("Call unit test cases related test cases\n")
