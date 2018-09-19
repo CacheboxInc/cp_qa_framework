@@ -1,0 +1,7 @@
+pytest
+pytest-html
+pytest-xdist
+colorlog
+requests
+pyVim
+django
