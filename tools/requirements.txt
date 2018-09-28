@@ -5,3 +5,5 @@ colorlog
 requests
 pyVim
 django
+assertpy
+httmock

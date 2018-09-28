@@ -17,6 +17,7 @@
 # importing the required modules
 #__all__ = []
 import os
+os.system("pip3 install -r tools/requirements.txt")
 import argparse
 from argparse import RawTextHelpFormatter
 import sys
@@ -63,7 +64,7 @@ def main():
 
         #Installing dependecies using pip
         #TBD Install those tools which are required for test suite to run
-        os.system("pip3 install -r tools/requirements.txt")
+        #os.system("pip3 install -r tools/requirements.txt")
 
         if args.unit:
                 print ("Call unit test cases related test cases\n")
