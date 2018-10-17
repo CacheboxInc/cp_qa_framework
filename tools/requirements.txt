@@ -7,3 +7,4 @@ pyVim
 django
 assertpy
 httmock
+selenium

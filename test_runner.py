@@ -15,7 +15,6 @@
 ##################################################################
 
 # importing the required modules
-#__all__ = []
 import os
 os.system("pip3 install -r tools/requirements.txt")
 import argparse
@@ -26,6 +25,7 @@ import sys
 from unit_suite.lib_tcs import unit_tests
 from ui_suite.lib_tcs import ui_tests
 from sanity_suite.lib_tcs import sanity_tests
+from perf_suite.lib_tcs import perf_tests
 import cp_global
         
 # Why am i spending so much time on help messages ? USUABILITY
@@ -77,10 +77,11 @@ def main():
                 ui_tests.init_ui()
         elif args.scalability:
                 print ("TBD: Call Locust.io to do CP scalibility testing.\n")
-        elif args.recommendations:
-                print ("TBD: Include recommendations, benefits TCs.\n")
+        #elif args.recommendations:
+        #        print ("TBD: Include recommendations, benefits TCs.\n")
         elif args.performance:
-                print ("TBD: Include CP Performance tests.\n")
+                print ("Running performance related testcases\n")
+                perf_tests.init_perf()
         elif args.failfirst:
                 print ("FAILFIRST")
                 exit(1)
