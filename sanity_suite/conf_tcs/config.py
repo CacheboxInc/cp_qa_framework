@@ -53,9 +53,12 @@ fh2.setFormatter(formatter2)
 logger.addHandler(fh2)
 
 
-APPLIANCE_IP = "10.10.14.2"
+APPLIANCE_IP = "10.10.26.184"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
+
+#Setup details for checking add and install
+SANITY_VCENTER_IP = "10.10.27.26"
 
 #VCENTER_IP = "192.168.1.25"
 #VCENTER_USERNAME = "administrator@vsphere.local"
@@ -65,19 +68,19 @@ APP_PASSWORD = "admin@123"
 
 # On-prem details
 
-VCENTER_IP = "10.10.8.58"
+VCENTER_IP = "10.10.8.105"
 VCENTER_USERNAME = "administrator@vsphere.local"
 VCENTER_PASSWORD = "Root@123"
-VCENTER_CLUSTER = "Cluster"
-VCENTER_DATASTORE = "datastore1"
+VCENTER_CLUSTER = "HYC_ONPREM_CLUSTER"
+VCENTER_DATASTORE = "ssd"
 VCENTER_NETWORK = "VM Network"
-VCENTER_RESOURCEPOOL = "test_pool"
+VCENTER_RESOURCEPOOL = "HYC_RP"
 VC_TYPE = 8
 
 CLUSTER_ID = ""
 CLUSTER_NAME = ""
 VM_NAME = "ReportVM1103"
-POWER_ON_FLAG = "TRUE"
+POWERON_FLAG = "TRUE"
 FLUSH_FLAG = "TRUE"
 
 
@@ -90,10 +93,10 @@ FLUSH_FLAG = "TRUE"
 #DATACENTER_RESOURCE_POOL = "vApp_Skapoor"
 
 ##Cloud details
-CLOUD_IP = "192.168.1.88"
+CLOUD_IP = "10.10.8.63"
 CLOUD_USER_NAME = "administrator@vsphere.local"
 CLOUD_PASSWORD  = "Root@123"
-CLOUD_APPLIANCE_IP = "192.168.4.29"
+CLOUD_APPLIANCE_IP = "10.10.25.223"
 
 # URL version
 VERSION = "v1.0"
@@ -116,7 +119,7 @@ CLOUD_SERVICES = [("TFTP_Server", 1), ("iPXE_Server", 1), ("AS_Server", 1), \
                   ("Cloud_Msg_GW", 1), ("StorD", 1), ("TGT_Server", 1)]
 
 # Name of VM for testing policy attach / detach tests
-VM_NAME = "Ubuntu_Test_VM_4"
+VM_NAME = "unit-test"
 VM_NAME_1 = "Ubuntu_Test_VM_1"
 ATTACH_POLICY = "WriteBack"
 CACHE_REPLICA = 0

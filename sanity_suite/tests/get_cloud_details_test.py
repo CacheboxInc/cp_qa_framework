@@ -6,8 +6,8 @@ import requests
 from pyVim import connect
 from pyVmomi import vmodl
 from pyVmomi import vim
-from unit_suite.tests.vim_utils import *
-from unit_suite.tests.pbm_utils import *
+from sanity_suite.tests.vim_utils import *
+from sanity_suite.tests.pbm_utils import *
 
 import warnings
 

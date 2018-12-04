@@ -1,4 +1,4 @@
-from unit_suite.conf_tcs.config import *
+from sanity_suite.conf_tcs.config import *
 import json
 import re
 
