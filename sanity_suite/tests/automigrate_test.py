@@ -68,13 +68,13 @@ class AutoMigrateTest(unittest.TestCase):
         logger.debug("%s Finished" % test_name)
 
     #
-    # Tests the post call
+    #Negative testing
     #
-    def test_2(self, url=DEMO_URL, test_name="Test_post_response", negative=False):
+    def test_2(self, url=DEMO_URL, test_name="Negative testing", negative=False):
         logger.debug("\n\nTest Name : ", test_name)
         response = requests.post("%s%s" %(URL, url), json=self.data_invalid, headers=headers, verify=False)
  
-        assert(response.status_code == 500)
+        assert(response.status_code != 200)
 
         logger.debug("Status Code : ", response.status_code)
         logger.debug("Resp : ", response.json())
