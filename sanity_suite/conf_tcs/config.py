@@ -24,7 +24,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 ##For Test set up
 REPORT_DIR = "/sanity_suite/logs_tcs/"
-TC_DIR = "/sanity_suite/tests/"
+TC_DIR = "/sanity_suite/tests/automigrate_test.py"
 XML_REPORT_DIR = "/sanity_suite/logs_tcs/"
 # Number of worker for parallel execution
 NODES = 2
@@ -53,7 +53,7 @@ fh2.setFormatter(formatter2)
 logger.addHandler(fh2)
 
 
-APPLIANCE_IP = "10.10.26.184"
+APPLIANCE_IP = "10.10.27.164"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
 
@@ -96,7 +96,7 @@ FLUSH_FLAG = "TRUE"
 CLOUD_IP = "10.10.8.63"
 CLOUD_USER_NAME = "administrator@vsphere.local"
 CLOUD_PASSWORD  = "Root@123"
-CLOUD_APPLIANCE_IP = "10.10.25.223"
+CLOUD_APPLIANCE_IP = "10.10.27.164"
 
 # URL version
 VERSION = "v1.0"
