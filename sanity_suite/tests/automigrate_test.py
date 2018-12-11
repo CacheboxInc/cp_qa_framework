@@ -51,33 +51,34 @@ class AutoMigrateTest(unittest.TestCase):
     data["cluster_name"] = CLUSTER_NAME
     data["vm_names"]     = VM_NAME
 
-   
+    data_invalid  = {}
+    data_invalid["vcenter_ip"]   = vc_ip
+    data_invalid["cluster_id"]   = CLUSTER_ID
+    data_invalid["cluster_name"] = CLUSTER_NAME
+    data_invalid["vm_names"]     = "invalid"
+ 
+ 
     # Tests the return code of the POST response
     #
     def test_1(self, url=DEMO_URL, test_name="Test_post", negative=False):
-        print("\n\nTest Name : ", test_name)
+        logger.debug("\n\nTest Name : ", test_name)
         response = requests.post("%s%s" %(URL, url), json=self.data, headers=headers, verify=False)
-        if negative is True:
-            assert(response.status_code != 200)
-        else:
-            assert(response.status_code == 200)
-        print("Status Code : ", response.status_code)
-        print("%s Finished" % test_name)
+        assert(response.status_code == 200)
+        logger.debug("Status Code : ", response.status_code)
+        logger.debug("%s Finished" % test_name)
 
     #
     # Tests the post call
     #
     def test_2(self, url=DEMO_URL, test_name="Test_post_response", negative=False):
-        print("\n\nTest Name : ", test_name)
-        response = requests.post("%s%s" %(URL, url), json=self.data, headers=headers, verify=False)
-        if negative is True:
-            assert(response.status_code != 200)
-        else:
-            assert(response.status_code == 200)
+        logger.debug("\n\nTest Name : ", test_name)
+        response = requests.post("%s%s" %(URL, url), json=self.data_invalid, headers=headers, verify=False)
+ 
+        assert(response.status_code == 500)
 
-        print("Status Code : ", response.status_code)
-        print("Resp : ", response.json())
-        print("%s Finished" % test_name)
+        logger.debug("Status Code : ", response.status_code)
+        logger.debug("Resp : ", response.json())
+        logger.debug("%s Finished" % test_name)
 
 if __name__ == "__main__":
     test_obj = AutoMigrateTest()

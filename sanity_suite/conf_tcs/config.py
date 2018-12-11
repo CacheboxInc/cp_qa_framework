@@ -24,7 +24,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 ##For Test set up
 REPORT_DIR = "/sanity_suite/logs_tcs/"
-TC_DIR = "/sanity_suite/tests/automigrate_test.py"
+TC_DIR = "/sanity_suite/tests/"
 XML_REPORT_DIR = "/sanity_suite/logs_tcs/"
 # Number of worker for parallel execution
 NODES = 2
