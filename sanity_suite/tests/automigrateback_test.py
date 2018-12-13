@@ -50,21 +50,20 @@ class AutoMigrateBackTest(unittest.TestCase):
         logger.debug("\n\nTest Name : ", test_name)
         response = requests.post("%s%s" %(URL, url), json=self.data, headers=headers, verify=False)
         assert(response.status_code == 200)
-        logger.debug("Status Code : ", response.status_code)
+        logger.debug("Status Code : %s" %response.status_code)
         logger.debug("%s Finished" % test_name)
 
     #
     # 
     #
     def test_2(self, url=DEMO_URL, test_name="Test_post_response", negative=False):
-        logger.debug("\n\nTest Name : ", test_name)
+        logger.debug("\n\nTest Name : %s" %test_name)
         response = requests.post("%s%s" %(URL, url), json=self.data_invalid, headers=headers, verify=False)
- 
+        logger.info("Negative test")
+        logger.info("Status Code : %s" %(response.status_code))
+        logger.info("Resp : %s"  %(response.json()))
+        logger.info("%s Finished" % test_name)
         assert(response.status_code != 200)
-
-        logger.debug("Status Code : ", response.status_code)
-        logger.debug("Resp : ", response.json())
-        logger.debug("%s Finished" % test_name)
 
 if __name__ == "__main__":
     test_obj = AutoMigrateBackTest()

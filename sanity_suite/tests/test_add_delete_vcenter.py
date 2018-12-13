@@ -1,6 +1,6 @@
 import getopt
 from sanity_suite.conf_tcs.config import *
-from sanity_suite.tests.utils import *
+from sanity_suite.lib_tcs.utils import *
 """config_file, args = get_config_file(sys.argv)
 config = __import__(config_file)
 for member_name in dir(config):
@@ -53,12 +53,12 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
-        self.assertEqual(res.getcode(), 201)
+        assert(res.getcode()== 201)
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
-        do_pass(self, 'test_01_add_vcenter', rc == 201 or rc == 503)
-
+        #do_pass(self, 'test_01_add_vcenter', rc == 201 or rc == 503)
+        assert(rc == 201 or rc == 503)
         return
 
     def test_02_re_add_existing_vcenter(self):
@@ -74,12 +74,13 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
-        self.assertEqual(res.getcode(), 409) 
+        assert(res.getcode()== 409) 
         logger.debug(self.vcenter_url)
         logger.debug(ret)
 
         rc = res.getcode()
-        do_pass(self, 'test_02_re_add_existing_vcenter', rc == 409 or rc == 503)
+        #do_pass(self, 'test_02_re_add_existing_vcenter', rc == 409 or rc == 503)
+        assert(rc == 409 or rc == 503)
 
         return
 
@@ -100,13 +101,14 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         res = self.pio.delete(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
 
-        self.assertEqual(res.getcode(), 200)
+        assert(res.getcode()==200)
 
         logger.debug(self.vcenter_url)
         logger.debug(ret)
 
         rc = res.getcode()
-        do_pass(self, 'test_03_delete_vcenter', rc == 200 or rc == 503)
+        #do_pass(self, 'test_03_delete_vcenter', rc == 200 or rc == 503)
+        assert(rc == 200 or rc == 503)
 
         return
     
@@ -129,7 +131,8 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
-        do_pass(self, 'test_04_force_add', rc == 201 or rc == 503)
+        #do_pass(self, 'test_04_force_add', rc == 201 or rc == 503)
+        assert(rc == 201 or rc == 503)
         
         self.vcenter = self.get_vcenters()
         vc_id = None
@@ -143,7 +146,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         res = self.pio.delete(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
 
-        self.assertEqual(res.getcode(), 200)
+        assert(res.getcode()== 200)
 
         logger.debug(self.vcenter_url)
         logger.debug(ret)
@@ -163,11 +166,12 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
         ret_msg = ret['msg']
-        self.assertEqual(ret_msg, err_msg)
+        assert(ret_msg== err_msg)
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
-        do_pass(self, 'test_05_add_vcenter_invalid_ip', rc == 500)
+        #do_pass(self, 'test_05_add_vcenter_invalid_ip', rc == 500)
+        assert(rc == 500)
         
     def test_06_add_vcenter_invalid_userid(self):
         '''
@@ -183,11 +187,12 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
         ret_msg = ret['msg']
-        self.assertEqual(ret_msg, err_msg)
+        assert (ret_msg== err_msg)
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
-        do_pass(self, 'test_06_add_vcenter_userid', rc == 500)
+        #do_pass(self, 'test_06_add_vcenter_userid', rc == 500)
+        assert(rc == 500)
         
     def test_07_add_vcenter_invalid_pwd(self):
         '''
@@ -203,11 +208,12 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
         ret_msg = ret['msg']
-        self.assertEqual(ret_msg, err_msg)
+        assert(ret_msg == err_msg)
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
-        do_pass(self, 'test_07_add_vcenter_invalid_pwd', rc == 500)
+        #do_pass(self, 'test_07_add_vcenter_invalid_pwd', rc == 500)
+        assert(rc == 500)
 
     def test_08_force_delete_vcenter(self):
         '''
@@ -223,7 +229,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
-        self.assertEqual(res.getcode(), 201)
+        assert(res.getcode() == 201)
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
@@ -240,13 +246,14 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         res = self.pio.delete(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
 
-        self.assertEqual(res.getcode(), 200)
+        assert(res.getcode()== 200)
 
         logger.debug(self.vcenter_url)
         logger.debug(ret)
 
         rc = res.getcode()
-        do_pass(self, 'test_08_force_delete_vcenter', rc == 200 or rc == 503)
+        #do_pass(self, 'test_08_force_delete_vcenter', rc == 200 or rc == 503)
+        assert (rc == 200 or rc == 503)
 
         return
         

@@ -24,10 +24,13 @@ from logging.handlers import TimedRotatingFileHandler
 
 ##For Test set up
 REPORT_DIR = "/sanity_suite/logs_tcs/"
+#TC_DIR = "/sanity_suite/tests/test_add_delete_vcenter.py"
 TC_DIR = "/sanity_suite/tests/"
 XML_REPORT_DIR = "/sanity_suite/logs_tcs/"
 # Number of worker for parallel execution
-NODES = 2
+REPORT_LOCATION_SERVER = "drugesh@192.168.3.96:"
+#Nodes for parallel execution
+NODES = 1
 
 
 
@@ -53,7 +56,7 @@ fh2.setFormatter(formatter2)
 logger.addHandler(fh2)
 
 
-APPLIANCE_IP = "10.10.27.164"
+APPLIANCE_IP = "10.10.28.145"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
 
@@ -68,7 +71,7 @@ SANITY_VCENTER_IP = "10.10.27.26"
 
 # On-prem details
 
-VCENTER_IP = "10.10.8.105"
+VCENTER_IP = "10.10.8.58"
 VCENTER_USERNAME = "administrator@vsphere.local"
 VCENTER_PASSWORD = "Root@123"
 VCENTER_CLUSTER = "HYC_ONPREM_CLUSTER"

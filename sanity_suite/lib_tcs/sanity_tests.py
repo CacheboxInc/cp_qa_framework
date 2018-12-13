@@ -46,7 +46,12 @@ def run_tests():
         logger.info("Running test sanity test cases")
         logger.info("test case directory : %s", cwd+TC_DIR)
 	##Calling pytest function for executing the test
-        os.system("python3 -m pytest %s -s -v --tb=line  --html=%s -n %s --junitxml=%s" % (cwd+TC_DIR , report_file , NODES , xml_report_dir  ))
+        os.system("python3 -m pytest %s -s -v --tb=auto -l --html=%s -n %s --junitxml=%s" % (cwd+TC_DIR , report_file , NODES , xml_report_dir  ))
+        os.system("scp %s %s" %(report_file , REPORT_LOCATION_SERVER))
+
+
+
+
 
 # Currently, logging happens at the test suite level.
 # TBD : TC Level logging and process level logging

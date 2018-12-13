@@ -1,5 +1,5 @@
 from sanity_suite.conf_tcs.config import *
-from sanity_suite.tests.utils import *
+from sanity_suite.lib_tcs.utils import *
 
 import getopt
 
