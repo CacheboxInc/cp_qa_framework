@@ -1,7 +1,5 @@
 from global_conf.config import *
 
-
-
 ##For Test set up
 REPORT_DIR = "/sanity_suite/logs_tcs/"
 #TC_DIR = "/sanity_suite/tests/test_add_delete_vcenter.py"
@@ -12,12 +10,13 @@ REPORT_LOCATION_SERVER = "drugesh@192.168.3.96:"
 #Nodes for parallel execution
 NODES = 1
 
-APPLIANCE_IP = "192.168.0.0"
+APPLIANCE_IP = "10.10.28.145"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
 
 #Setup details for checking add and install
-SANITY_VCENTER_IP = "10.10.27.26"
+#SANITY_VCENTER_IP = "10.10.27.26"
+SANITY_VCENTER_IP = "10.10.0.0"
 
 #VCENTER_IP = "192.168.1.25"
 #VCENTER_USERNAME = "administrator@vsphere.local"
@@ -63,17 +62,20 @@ VERSION = "v1.0"
 
 HDM_LIBRARY_NAME = "HDM_CONTENT_LIBRARY"
 
-DATACENTER = "vcenter.sddc-34-216-134-56.vmc.vmware.com"
-DATACENTER_USERNAME = "cloudadmin@vmc.local"
-DATACENTER_PASSWORD = "h$gzJh2*9a"
-DATACENTER_TYPE = "VMC"
-DATACENTER_DATASTORE = "WorkloadDatastore"
-DATACENTER_CLUSTER_NAME = "Cluster-1"
-DATACENTER_RESOURCE_POOL = "Compute-ResourcePool"
-DATACENTER_NETWORK_NAME = "pio_network_1"
+DATACENTER = ""
 
-ON_PREM_OPSD_SERVICE = "VDDK"
-ON_PREM_GATEWAY_SERVICE = "Prem_Msg_GW"
+DATACENTER_USERNAME = ""
+DATACENTER_PASSWORD = ""
+DATACENTER_TYPE = ""
+DATACENTER_DATASTORE = ""
+DATACENTER_CLUSTER_NAME = ""
+DATACENTER_RESOURCE_POOL = ""
+DATACENTER_NETWORK_NAME = ""
+DATACENTER_FOLDER_NAME = "Discovered virtual machine"
+
+
+ON_PREM_OPSD_SERVICE = ""
+ON_PREM_GATEWAY_SERVICE = ""
 
 CLOUD_SERVICES = [("TFTP_Server", 1), ("iPXE_Server", 1), ("AS_Server", 1), \
                   ("Cloud_Msg_GW", 1), ("StorD", 1), ("TGT_Server", 1)]
