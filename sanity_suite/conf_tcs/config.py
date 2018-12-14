@@ -1,26 +1,6 @@
-import http.cookiejar
-import copy
-import getopt
-import inspect
-import json
-import os
-import random
-import ssl
-import sys
-import unittest
-import logging
-import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse
-import xmlrpc.client
-import pickle
-import datetime
-from datetime import date
-import calendar
-import smtplib
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from global_conf.config import *
 
-from logging.handlers import TimedRotatingFileHandler
+
 
 ##For Test set up
 REPORT_DIR = "/sanity_suite/logs_tcs/"
@@ -32,31 +12,7 @@ REPORT_LOCATION_SERVER = "drugesh@192.168.3.96:"
 #Nodes for parallel execution
 NODES = 1
 
-
-
-##For logging
-log_info = logging.INFO
-log_debug = logging.DEBUG
-LOG_FILE = "%s/%s.log" % (os.getcwd(), "appliance")
-LOG_ROTATION_TIME = 'W2'
-
-formatter1 = logging.Formatter('%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
-formatter2 = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
-# logging for profiler
-logger = logging.getLogger("pioqa-cp")
-logger.setLevel(log_info)
-dlr = TimedRotatingFileHandler(LOG_FILE, when=LOG_ROTATION_TIME)
-dlr.setLevel(log_debug)
-dlr.setFormatter(formatter1)
-logger.addHandler(dlr)
-
-fh2 = logging.FileHandler('sanity_suite/logs_tcs/result.txt')
-fh2.setLevel(log_info)
-fh2.setFormatter(formatter2)
-logger.addHandler(fh2)
-
-
-APPLIANCE_IP = "10.10.28.145"
+APPLIANCE_IP = "192.168.0.0"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
 
@@ -71,18 +27,19 @@ SANITY_VCENTER_IP = "10.10.27.26"
 
 # On-prem details
 
-VCENTER_IP = "10.10.8.58"
+VCENTER_IP = "192.168.0.0"
+#VCENTER_IP = "hyc-cp3.primaryio.lan"
 VCENTER_USERNAME = "administrator@vsphere.local"
-VCENTER_PASSWORD = "Root@123"
-VCENTER_CLUSTER = "HYC_ONPREM_CLUSTER"
+VCENTER_PASSWORD = "Naruto@123"
+VCENTER_CLUSTER = "Cluster"
 VCENTER_DATASTORE = "ssd"
 VCENTER_NETWORK = "VM Network"
 VCENTER_RESOURCEPOOL = "HYC_RP"
 VC_TYPE = 8
 
-CLUSTER_ID = ""
-CLUSTER_NAME = ""
-VM_NAME = "ReportVM1103"
+CLUSTER_ID = None
+CLUSTER_NAME = None
+VM_NAME = "U3"
 POWERON_FLAG = "TRUE"
 FLUSH_FLAG = "TRUE"
 
@@ -96,10 +53,10 @@ FLUSH_FLAG = "TRUE"
 #DATACENTER_RESOURCE_POOL = "vApp_Skapoor"
 
 ##Cloud details
-CLOUD_IP = "10.10.8.63"
+CLOUD_IP = "192.168.0.0"
 CLOUD_USER_NAME = "administrator@vsphere.local"
-CLOUD_PASSWORD  = "Root@123"
-CLOUD_APPLIANCE_IP = "10.10.27.164"
+CLOUD_PASSWORD  = "Naruto@123"
+#CLOUD_APPLIANCE_IP = "10.10.27.164"
 
 # URL version
 VERSION = "v1.0"
@@ -122,12 +79,12 @@ CLOUD_SERVICES = [("TFTP_Server", 1), ("iPXE_Server", 1), ("AS_Server", 1), \
                   ("Cloud_Msg_GW", 1), ("StorD", 1), ("TGT_Server", 1)]
 
 # Name of VM for testing policy attach / detach tests
-VM_NAME = "unit-test"
+#VM_NAME = "unit-test"
 VM_NAME_1 = "Ubuntu_Test_VM_1"
-ATTACH_POLICY = "WriteBack"
+ATTACH_POLICY = "Passthrough"
 CACHE_REPLICA = 0
 
-HOST_IP_FORMAT = "192.168.4.12%s"
+HOST_IP_FORMAT = "0.0.0.0"
 HOST_FORMAT = '{mtu=1500, SpeedMb=1000 MB, networklabel=Management Network, switchName=vSwitch0, addr=%s, ipdisplay=vmk0 (%s), is_configured=True}'
 DATA_FORMAT = {'Data': '', 'name': ''}
 TIME_SLEEP = 5

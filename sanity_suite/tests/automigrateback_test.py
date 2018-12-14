@@ -11,9 +11,11 @@
 import argparse
 import json
 import requests
+import time
 import traceback
 from sanity_suite.conf_tcs.config import *
 from sanity_suite.lib_tcs.utils import *
+from global_utils.vmware_utils.vm_utils_rest import *
 
 requests.packages.urllib3.disable_warnings()
 
@@ -31,17 +33,13 @@ class AutoMigrateBackTest(unittest.TestCase):
     vc_ip = VCENTER_IP
     data = {}
     data["vcenter_ip"]   = vc_ip
-    data["cluster_id"]   = CLUSTER_ID
-    data["cluster_name"] = CLUSTER_NAME
     data["flush_flag"]   = FLUSH_FLAG
     data["poweron_flag"] = POWERON_FLAG
-    data["vm_names"]     = VM_NAME
+    data["vm_names"]     = [VM_NAME]
 
     data_invalid  = {}
     data_invalid["vcenter_ip"]   = vc_ip
-    data_invalid["cluster_id"]   = CLUSTER_ID
-    data_invalid["cluster_name"] = CLUSTER_NAME
-    data_invalid["vm_names"]     = "invalid"
+    data_invalid["vm_names"]     = ["invalid"]
  
  
     # Tests the return code of the POST response
@@ -50,8 +48,11 @@ class AutoMigrateBackTest(unittest.TestCase):
         logger.debug("\n\nTest Name : ", test_name)
         response = requests.post("%s%s" %(URL, url), json=self.data, headers=headers, verify=False)
         assert(response.status_code == 200)
-        logger.debug("Status Code : %s" %response.status_code)
-        logger.debug("%s Finished" % test_name)
+        logger.info("Status Code : %s" %response.status_code)
+        if response.status_code == 200:
+            time.sleep(100)
+            assert(vm_present_on_vcenter(CLOUD_IP, VM_NAME)==False , "VM is not migrated back to ON prem")
+
 
     #
     # 
