@@ -172,6 +172,7 @@ class DeployCloudQA(QAMixin, unittest.TestCase):
             cluster = None
             rs = None
             ds = None
+            vf = None
             ns = None
 
             for d in data:
@@ -195,12 +196,17 @@ class DeployCloudQA(QAMixin, unittest.TestCase):
                         continue
                     ns = n["moid"]
 
+                for v_f in d["vm_folders"]:
+                    if v_f["name"] != DATACENTER_FOLDER_NAME:
+                        continue
+                    vf = v_f["moid"]
+
 
             self.assertNotEqual(cluster, None)
             self.assertNotEqual(rs, None)
             self.assertNotEqual(ds, None)
             self.assertNotEqual(ns, None)
-
+            self.assertNotEqual(vf, None)
             services = []
 
             for service_type, scale in CLOUD_SERVICES:
@@ -213,6 +219,7 @@ class DeployCloudQA(QAMixin, unittest.TestCase):
                     {
                      "cluster_moid": cluster,
                      "resource_pool_moid": rs,
+                     "vm_folder_moid": vf,
                      "datastore_moid": ds,
                      "network_moid": ns,
                      "services": services
