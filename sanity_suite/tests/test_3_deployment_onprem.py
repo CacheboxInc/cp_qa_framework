@@ -34,7 +34,7 @@ class DeployQA(QAMixin, unittest.TestCase):
         self.vcenter.disconnect()
         self.pio.logout()
 
-    def test_01_deploy_with_install(self):
+    """def test_01_deploy_with_install(self):
         #
         # test the setdata. Return code should be 0
         #
@@ -106,7 +106,7 @@ class DeployQA(QAMixin, unittest.TestCase):
             logger.exception(err)
             do_pass(self, 'test_01_deploy_with_install', 0)
 
-        do_pass(self, 'test_01_deploy_with_install', 1)
+        do_pass(self, 'test_01_deploy_with_install', 1)"""
 
     def test_02_deploy_without_install(self):
         try:

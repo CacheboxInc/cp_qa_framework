@@ -49,7 +49,7 @@ def login_successful_and_home_page_is_displayed():
     home = driver.find_element_by_xpath("//img[@alt ='PIO Appliance']")
     #assert driver.title == "PIO Appliance"
     time.sleep(20)
-    assert driver.current_url == "https://10.10.14.67/#/plugins"
+    assert driver.current_url == "https://10.10.117.88/#/plugins"
     driver.close()
 
 

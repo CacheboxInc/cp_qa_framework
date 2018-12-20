@@ -1,4 +1,5 @@
 pytest
+pytest_bdd
 pytest-html
 pytest-xdist
 colorlog

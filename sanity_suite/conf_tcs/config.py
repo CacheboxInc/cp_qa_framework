@@ -3,20 +3,24 @@ from global_conf.config import *
 ##For Test set up
 REPORT_DIR = "/sanity_suite/logs_tcs/"
 #TC_DIR = "/sanity_suite/tests/test_add_delete_vcenter.py"
-TC_DIR = "/sanity_suite/tests/"
+TC_DIR = "/sanity_suite/tests/test_3_deployment_onprem.py"
 XML_REPORT_DIR = "/sanity_suite/logs_tcs/"
 # Number of worker for parallel execution
 REPORT_LOCATION_SERVER = "drugesh@192.168.3.96:"
 #Nodes for parallel execution
 NODES = 1
 
-APPLIANCE_IP = "10.10.28.145"
+APPLIANCE_IP = "10.10.117.88"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
 
 #Setup details for checking add and install
-#SANITY_VCENTER_IP = "10.10.27.26"
-SANITY_VCENTER_IP = "10.10.0.0"
+SANITY_VCENTER_IP = "10.10.27.26"
+
+CLOUDBURST_TAG = 'HDM-CLOUDBURST'
+WORKLOAD_TAG = 'HDM-APPLICATION-TYPE'
+
+
 
 #VCENTER_IP = "192.168.1.25"
 #VCENTER_USERNAME = "administrator@vsphere.local"
@@ -26,14 +30,14 @@ SANITY_VCENTER_IP = "10.10.0.0"
 
 # On-prem details
 
-VCENTER_IP = "192.168.0.0"
+VCENTER_IP = "10.10.8.58"
 #VCENTER_IP = "hyc-cp3.primaryio.lan"
 VCENTER_USERNAME = "administrator@vsphere.local"
-VCENTER_PASSWORD = "Naruto@123"
+VCENTER_PASSWORD = "Root@123"
 VCENTER_CLUSTER = "Cluster"
-VCENTER_DATASTORE = "ssd"
+VCENTER_DATASTORE = "Samsung_2TB_SSD"
 VCENTER_NETWORK = "VM Network"
-VCENTER_RESOURCEPOOL = "HYC_RP"
+VCENTER_RESOURCEPOOL = "oprp"
 VC_TYPE = 8
 
 CLUSTER_ID = None
@@ -62,15 +66,16 @@ VERSION = "v1.0"
 
 HDM_LIBRARY_NAME = "HDM_CONTENT_LIBRARY"
 
-DATACENTER = ""
 
-DATACENTER_USERNAME = ""
-DATACENTER_PASSWORD = ""
-DATACENTER_TYPE = ""
-DATACENTER_DATASTORE = ""
-DATACENTER_CLUSTER_NAME = ""
-DATACENTER_RESOURCE_POOL = ""
-DATACENTER_NETWORK_NAME = ""
+#Setup used by HA deploy test
+DATACENTER = "10.10.8.58"
+DATACENTER_USERNAME = "administrator@vsphere.local"
+DATACENTER_PASSWORD = "Root@123"
+DATACENTER_TYPE = "VCENTER"
+DATACENTER_DATASTORE = "Samsung_2TB_SSD"
+DATACENTER_CLUSTER_NAME = "Cluster"
+DATACENTER_RESOURCE_POOL = "oprp"
+DATACENTER_NETWORK_NAME = "VM NETWORK"
 DATACENTER_FOLDER_NAME = "Discovered virtual machine"
 
 

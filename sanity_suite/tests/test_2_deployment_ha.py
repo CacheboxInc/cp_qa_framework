@@ -42,6 +42,18 @@ class DeployQA(QAMixin, unittest.TestCase):
     def tearDown(self):
         self.pio.logout()
 
+    def get_vcenters(self):
+        get_vcenter_url = self.pio.get_url("/plugin")
+        logger.debug("Vcenter url is {}".format(get_vcenter_url))
+        # self.pio.login()
+
+        res = self.pio.get(get_vcenter_url)
+        data = json.loads(res.read().decode('utf-8'))
+        self.assertEqual(res.getcode(), 200)
+
+        return data['data']
+
+
     def test_00_add_vcenter(self):
         '''
             Test which will try to re-add already added vCenter
@@ -51,21 +63,24 @@ class DeployQA(QAMixin, unittest.TestCase):
                 'ip': VCENTER_IP,
                 'username': VCENTER_USERNAME,
                 'password': VCENTER_PASSWORD,
-                'force_add': 1,
-                'dtype': VC_TYPE
+                'force_add': 0,
+                'dtype': 0,
+                'cloudburst_tag': 'HDM-CLOUDBURST',
+                'workload_tag': 'HDM-APPLICATION-TYPE',
                }
 
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
-        logger.debug(self.vcenter_url)
-        logger.debug(ret)
+        logger.info(self.vcenter_url)
+        logger.info(ret)
 
         rc = res.getcode()
-        do_pass(self, 'test_00_add_vcenter', rc == 200 or rc == 201 or rc == 503 or rc == 409)
+        #do_pass(iself, 'test_00_add_vcenter', rc == 200 or rc == 201 or rc == 503 or rc == 409)
+        assert rc==201, "Failed to add vCenter"
 
-        return
+        
 
-    def test_01_upload_pio_ovf(self):
+    """def test_01_upload_pio_ovf(self):
         #
         # test the setdata. Return code should be 0
         #
@@ -84,7 +99,7 @@ class DeployQA(QAMixin, unittest.TestCase):
             logger.info(values)
             logger.info(ret)
 
-            self.assertEqual(res.getcode(), 200)
+            assert res.getcode() == 200, "Failed to add pio_OVF"
 
             data = json.loads(ret)
             self.assertNotEqual(data.get("ovf_name"), None)
@@ -93,7 +108,7 @@ class DeployQA(QAMixin, unittest.TestCase):
             logger.exception(err)
             do_pass(self, 'test_01_upload_pio_ovf', 0)
 
-        do_pass(self, 'test_01_upload_pio_ovf', 1)
+        do_pass(self, 'test_01_upload_pio_ovf', 1)"""
 
     def test_02_upload_machine_ovf(self):
         #
@@ -131,6 +146,7 @@ class DeployQA(QAMixin, unittest.TestCase):
                         'datacenter_username': DATACENTER_USERNAME,
                         'datacenter_type' : DATACENTER_TYPE,
                         'datacenter_datastore': DATACENTER_DATASTORE,
+                        'iso_name': 'TEST_ISO'
                      }
 
             res = self.pio.post(self.upload_vm_iso, values)
@@ -433,9 +449,47 @@ class DeployQA(QAMixin, unittest.TestCase):
             data = json.loads(ret)
         except Exception as err:
             logger.exception(err)
-            do_pass(self, 'test_13_cleanup_vm_iso', 0)
+            assert False, "Exception occured"
 
         do_pass(self, 'test_13_cleanup_vm_iso', 1)
+     
+    def test_14_cleanup_vcenter(self):
+        '''
+            Test which would test delete vCenter PIO operation
+            1.Add Vcenter
+            2.Delte Vcenter
+        '''
+        data = {
+                'username': VCENTER_USERNAME,
+                'ip': VCENTER_IP,
+                'password': VCENTER_PASSWORD,
+                'force_add': 1,
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'dtype': 0,
+               }
+        vc_id = None
+        vcenter = self.get_vcenters()
+        for vc in vcenter:
+            if vc.get('vcenter_ip') == VCENTER_IP:
+                vc_id = vc.get('id')
+                break
+
+        data = {'force_delete': 1, 'id': vc_id}
+
+        res = self.pio.delete(self.vcenter_url, data)
+        ret = json.loads(res.read().decode('utf-8'))
+
+        assert(res.getcode()== 200)
+
+        logger.debug(self.vcenter_url)
+        logger.debug(ret)
+
+        rc = res.getcode()
+        #do_pass(self, 'test_08_force_delete_vcenter', rc == 200 or rc == 503)
+        assert rc == 200
+  
+         
 
 if __name__ == "__main__":
     unittest.main(argv=["ha_deploy.py"] + args)

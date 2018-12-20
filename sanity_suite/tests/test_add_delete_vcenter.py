@@ -1,11 +1,8 @@
+import requests
 import getopt
 from sanity_suite.conf_tcs.config import *
 from sanity_suite.lib_tcs.utils import *
-"""config_file, args = get_config_file(sys.argv)
-config = __import__(config_file)
-for member_name in dir(config):
-    if not member_name.startswith("__"):
-        globals()[member_name] = getattr(config, member_name)"""
+headers = {'Content-type':'application/json'}
 
 
 class AddRemoveVcenter(QAMixin, unittest.TestCase):
@@ -14,7 +11,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         logger.debug("Inside init() method")
         super(AddRemoveVcenter, self).__init__(*args, **kwargs)
         self.pio = PIOAppliance()
-        self.vcenter_url = self.pio.get_url("/plugin")
+        self.vcenter_url = self.pio.get_url("plugin")
         self.__class__.vcenter_id = None
 
         self.__class__.clusters = []
@@ -47,19 +44,19 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         '''
         data = {
                 'username': VCENTER_USERNAME,
-                'ip': VCENTER_IP,
+                'ip': SANITY_VCENTER_IP,
                 'password': VCENTER_PASSWORD,
-                'force_add': 0
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'force_add': 0,
+                'dtype': 0,
                }
-        res = self.pio.post(self.vcenter_url, data)
-        ret = json.loads(res.read().decode('utf-8'))
-        assert(res.getcode()== 201)
-        logger.debug(self.vcenter_url)
-        logger.debug(ret)
-        rc = res.getcode()
-        #do_pass(self, 'test_01_add_vcenter', rc == 201 or rc == 503)
-        assert(rc == 201 or rc == 503)
-        return
+        resp = requests.post(self.vcenter_url, json=data, verify=False, headers=headers)
+        ret = resp.status_code
+        logger.info(self.vcenter_url)
+        logger.info(ret)
+        logger.info(resp)
+        assert ret == 201, "Vcenter is not added successfully"
 
     def test_02_re_add_existing_vcenter(self):
         '''
@@ -68,9 +65,14 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         '''
         data = {
                 'username': VCENTER_USERNAME,
-                'ip': VCENTER_IP,
+                'ip': SANITY_VCENTER_IP,
                 'password': VCENTER_PASSWORD,
-                'force_add': 0
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'force_add': 0,
+                'dtype': 0,
+ 
+                
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
@@ -82,7 +84,6 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         #do_pass(self, 'test_02_re_add_existing_vcenter', rc == 409 or rc == 503)
         assert(rc == 409 or rc == 503)
 
-        return
 
     def test_03_delete_vcenter(self):
         '''
@@ -92,7 +93,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         vc_id = None
 
         for vc in self.vcenter:
-            if vc.get('vcenter_ip') == VCENTER_IP:
+            if vc.get('vcenter_ip') == SANITY_VCENTER_IP:
                 vc_id = vc.get('id')
                 break
 
@@ -110,7 +111,6 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         #do_pass(self, 'test_03_delete_vcenter', rc == 200 or rc == 503)
         assert(rc == 200 or rc == 503)
 
-        return
     
     def test_04_force_add(self):
         '''
@@ -120,9 +120,14 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         '''
         data = {
                 'username': VCENTER_USERNAME,
-                'ip': VCENTER_IP,
+                'ip': SANITY_VCENTER_IP,
                 'password': VCENTER_PASSWORD,
-                'force_add': 1
+                'force_add': 1,
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+
+                'dtype': 0,
+
                }
         res = self.pio.post(self.vcenter_url, data)
         
@@ -137,7 +142,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         self.vcenter = self.get_vcenters()
         vc_id = None
         for vc in self.vcenter:
-            if vc.get('vcenter_ip') == VCENTER_IP:
+            if vc.get('vcenter_ip') == SANITY_VCENTER_IP:
                 vc_id = vc.get('id')
                 break
 
@@ -156,12 +161,16 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         Add vcenter with invalid IP to the PIO_Appliance
         '''
         INVALID_VC_IP = '169.168.2.1'
-        err_msg = "Please ensure that vCenter {} is reachable from the appliance.".format(INVALID_VC_IP)
+        err_msg = "Error: PM-141: Please ensure that vCenter {} is reachable from the appliance.".format(INVALID_VC_IP)
         data = {
                 'username': VCENTER_USERNAME,
                 'ip': INVALID_VC_IP,
                 'password': VCENTER_PASSWORD,
-                'force_add': 1
+                'force_add': 1,
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'dtype': 0,
+
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
@@ -171,49 +180,56 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         logger.debug(ret)
         rc = res.getcode()
         #do_pass(self, 'test_05_add_vcenter_invalid_ip', rc == 500)
-        assert(rc == 500)
+        assert rc != 201 , "Vcenter with invalid Ip added successfully"
         
     def test_06_add_vcenter_invalid_userid(self):
         '''
         Add vcenter with wrong user_id
         '''
-        err_msg = "Please check the credentials for vCenter {}.".format(VCENTER_IP)
+        err_msg = "Please check the credentials for vCenter {}.".format(SANITY_VCENTER_IP)
         data = {
                 'username':"%s_rand_string" %VCENTER_USERNAME,
-                'ip': VCENTER_IP,
+                'ip': SANITY_VCENTER_IP,
                 'password': VCENTER_PASSWORD,
-                'force_add': 0
+                'force_add': 0,
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'dtype': 0,
+
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
         ret_msg = ret['msg']
-        assert (ret_msg== err_msg)
+        assert (ret_msg== err_msg , "Proper error message is not getting displayed")
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
-        #do_pass(self, 'test_06_add_vcenter_userid', rc == 500)
-        assert(rc == 500)
+        assert rc != 201 ,"vCenter got added with invalid credentials"
         
     def test_07_add_vcenter_invalid_pwd(self):
         '''
         Add vcenter with wrong user_id
         '''
-        err_msg = "Please check the credentials for vCenter {}.".format(VCENTER_IP)
+        err_msg = "Please check the credentials for vCenter {}.".format(SANITY_VCENTER_IP)
         data = {
                 'username': VCENTER_USERNAME,
-                'ip': VCENTER_IP,
+                'ip': SANITY_VCENTER_IP,
                 'password': "%s_rand_string"%VCENTER_PASSWORD,
-                'force_add': 0
+                'force_add': 0,
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'dtype': 0,
+
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
         ret_msg = ret['msg']
-        assert(ret_msg == err_msg)
+        assert(ret_msg == err_msg ,"Proper error message is not getting displayed"  )
         logger.debug(self.vcenter_url)
         logger.debug(ret)
         rc = res.getcode()
         #do_pass(self, 'test_07_add_vcenter_invalid_pwd', rc == 500)
-        assert(rc == 500)
+        assert rc == 500 
 
     def test_08_force_delete_vcenter(self):
         '''
@@ -223,9 +239,12 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         '''
         data = {
                 'username': VCENTER_USERNAME,
-                'ip': VCENTER_IP,
+                'ip': SANITY_VCENTER_IP,
                 'password': VCENTER_PASSWORD,
-                'force_add': 1
+                'force_add': 1,
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'dtype': 0,
                }
         res = self.pio.post(self.vcenter_url, data)
         ret = json.loads(res.read().decode('utf-8'))
@@ -237,7 +256,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         vc_id = None
         
         for vc in self.vcenter:
-            if vc.get('vcenter_ip') == VCENTER_IP:
+            if vc.get('vcenter_ip') == SANITY_VCENTER_IP:
                 vc_id = vc.get('id')
                 break
 
@@ -253,9 +272,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
 
         rc = res.getcode()
         #do_pass(self, 'test_08_force_delete_vcenter', rc == 200 or rc == 503)
-        assert (rc == 200 or rc == 503)
-
-        return
+        assert rc == 200 
         
         
 if __name__ == "__main__":
