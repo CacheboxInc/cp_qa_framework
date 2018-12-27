@@ -24,17 +24,74 @@ class DeployQA(QAMixin, unittest.TestCase):
         self.pio = PIOAppliance()
         self.deploy_on_prem = self.pio.get_url("/deployment/onprem")
         self.deploy_update = self.pio.get_url("PIOA_Primary/v1.0/deployment/update")
+        self.register_plugin_url = self.pio.get_url("/install/2")
+        self.unregister_plugin_url = self.pio.get_url("/uninstall/1")
+        self.__class__.vcenter_id = None
 
     def setUp(self):
         warnings.filterwarnings("ignore", category=ResourceWarning, message="unclosed.*<ssl.SSLSocket.*>")
         self.vcenter = VCenter(VCENTER_IP, VCENTER_USERNAME, VCENTER_PASSWORD)
-        sys.stdout.write("\r")
+        if self.__class__.vcenter_id is None:
+            self.vcenters= self.get_vcenters()
+            if len(self.vcenters) == 0:
+                logger.error("No vCenters :  Skipping all tests")
+                self.skipTest('InstallQA')
+                return
+
+            self.__class__.vcenter_id = random.choice(self.vcenters)['id']
+
+        #Registring Plugin and         
+        self.pio.login()
+        values = {
+                     'vcenter_id' : self.__class__.vcenter_id
+                 }
+
+        res = self.pio.post(self.register_plugin_url, values)
+        data = res.read().decode('utf-8')
+
+        logger.debug(self.register_plugin_url)
+        logger.debug(data)
+        assert res.getcode() == 200 , "Plugin registration gets failed"
+
+
 
     def tearDown(self):
+        self.pio.login()
+
+        values = {
+                  'vcenter_id' : self.__class__.vcenter_id
+                 }
+
+        res = self.pio.post(self.unregister_plugin_url, values)
+        data = res.read().decode('utf-8')
+
+        logger.debug(self.unregister_plugin_url)
+        logger.debug(data)
+
+        self.assertEqual(res.getcode(), 200)
+
         self.vcenter.disconnect()
         self.pio.logout()
 
-    """def test_01_deploy_with_install(self):
+    def get_vcenters(self):
+        get_vcenter_url = self.pio.get_url("/plugin")
+
+        self.pio.login()
+
+        res = self.pio.get(get_vcenter_url)
+        ret = res.read()
+
+        logger.debug(get_vcenter_url)
+        logger.debug(ret)
+
+        data = json.loads(ret.decode('utf-8'))
+        self.assertEqual(res.getcode(), 200)
+
+        return data['data']
+
+
+
+        """"def test_01_deploy_with_install(self):
         #
         # test the setdata. Return code should be 0
         #
@@ -212,10 +269,11 @@ class DeployQA(QAMixin, unittest.TestCase):
                 res = self.pio.post(self.deploy_update, values)
                 data = res.read().decode('utf-8')
 
-                logger.debug(self.deploy_update)
-                logger.debug(data)
-
-                self.assertEqual(res.getcode(), 200)
+                logger.info(self.deploy_update)
+                logger.info(data)
+                logger.info(res.getcode())
+                #self.assertEqual(res.getcode(), 200)
+                assert res.getcode() ==200 , "failed to deploy with faliure"
 
         except Exception as err:
             logger.exception(err)

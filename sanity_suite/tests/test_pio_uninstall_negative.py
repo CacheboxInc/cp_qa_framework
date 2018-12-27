@@ -12,6 +12,7 @@ for member_name in dir(config):
 
 pio = PIOAppliance()
 MOD_SETUP_ERROR = ""
+VCENTER_IP= SANITY_VCENTER_IP
 
 def setUpModule():
     global MOD_SETUP_ERROR

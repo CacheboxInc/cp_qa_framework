@@ -2,19 +2,24 @@ from global_conf.config import *
 
 ##For Test set up
 REPORT_DIR = "/sanity_suite/logs_tcs/"
-#TC_DIR = "/sanity_suite/tests/test_add_delete_vcenter.py"
-TC_DIR = "/sanity_suite/tests/test_3_deployment_onprem.py"
+TC_DIR = "/sanity_suite/tests/test_automigrate*"
+#TC_DIR = "/sanity_suite/tests/test_2_deployment_ha.py"
 XML_REPORT_DIR = "/sanity_suite/logs_tcs/"
 # Number of worker for parallel execution
 REPORT_LOCATION_SERVER = "drugesh@192.168.3.96:"
 #Nodes for parallel execution
 NODES = 1
 
-APPLIANCE_IP = "10.10.117.88"
+
+
+
+#Main SetUP
+#APPLIANCE_IP = "10.10.141.72"
+APPLIANCE_IP = "10.10.0.0"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
 
-#Setup details for checking add and install
+#Setup details for checking add and install and deploy HA test
 SANITY_VCENTER_IP = "10.10.27.26"
 
 CLOUDBURST_TAG = 'HDM-CLOUDBURST'
@@ -22,16 +27,10 @@ WORKLOAD_TAG = 'HDM-APPLICATION-TYPE'
 
 
 
-#VCENTER_IP = "192.168.1.25"
-#VCENTER_USERNAME = "administrator@vsphere.local"
-#VCENTER_PASSWORD = "Root@123"
-#VCENTER_CLUSTER = "Cluster"
-#VC_TYPE = 0
-
 # On-prem details
 
-VCENTER_IP = "10.10.8.58"
-#VCENTER_IP = "hyc-cp3.primaryio.lan"
+#VCENTER_IP = "10.10.8.58"
+VCENTER_IP = "hyc-cp3.primaryio.lan"
 VCENTER_USERNAME = "administrator@vsphere.local"
 VCENTER_PASSWORD = "Root@123"
 VCENTER_CLUSTER = "Cluster"
@@ -42,24 +41,15 @@ VC_TYPE = 8
 
 CLUSTER_ID = None
 CLUSTER_NAME = None
-VM_NAME = "U3"
-POWERON_FLAG = "TRUE"
+VM_NAME = "test_VM3"
+POWERON_FLAG = "FALSE"
 FLUSH_FLAG = "TRUE"
 
 
-# used to test deployement
-#DATACENTER = "192.168.1.25"
-#DATACENTER_USERNAME = "administrator@vsphere.local"
-#DATACENTER_TYPE = "VCENTER"
-#DATACENTER_DATASTORE = "QNAP_NFS"
-#DATACENTER_CLUSTER_NAME = "Dev_Cluster_6.5_Esxi"
-#DATACENTER_RESOURCE_POOL = "vApp_Skapoor"
-
 ##Cloud details
-CLOUD_IP = "192.168.0.0"
+CLOUD_IP = "10.10.8.41"
 CLOUD_USER_NAME = "administrator@vsphere.local"
 CLOUD_PASSWORD  = "Naruto@123"
-#CLOUD_APPLIANCE_IP = "10.10.27.164"
 
 # URL version
 VERSION = "v1.0"
