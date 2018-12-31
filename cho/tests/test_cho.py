@@ -14,32 +14,15 @@ import requests
 import time
 import traceback
 
-from sanity_suite.conf_tcs.config import *
-from sanity_suite.lib_tcs.utils import *
+#from sanity_suite.conf_tcs.config import *
+#from sanity_suite.lib_tcs.utils import *
 from global_utils.vmware_utils.vm_utils_rest import *
+from global_utils.vmware_utils.vm_details import get_ip
 
 requests.packages.urllib3.disable_warnings()
 
 URL        = "https://%s:443"
 DEMO_URL = "/automigrate"
-
-'''
-Test for:
-	1.  Auto migrations
-
-Sample test run:
--> Without Cluster info
- python3.5 automigrate_test.py --appliance-ip 192.168.5.140 --vcenter-ip 192.168.1.27 --vm-names Ubuntu_1 Ubuntu_2 Ubuntu_3
--> With Cluster info
- python3.5 automigrate_test.py --appliance-ip 192.168.5.140 --cluster-id 192168127_UI_Cluster --cluster-name UI_Cluster --vcenter-ip 192.168.1.27 --vm-names Ubuntu_1 Ubuntu_2 Ubuntu_3
-
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--appliance-ip', required=True, help='Appliance IP')
-parser.add_argument('--cluster-id', required=False, help='Cluster Id', default=None)
-parser.add_argument('--cluster-name', required=False, help='Cluster Name', default=None)
-parser.add_argument('--vcenter-ip', required=True, help='vCenter IP')
-parser.add_argument('--vm-names', required=True, nargs='+', help='VM Name(s)') '''
 
 URL      = URL % (APPLIANCE_IP)
 headers = {'Content-type': 'application/json'}
@@ -59,32 +42,33 @@ class AutoMigrateTest(unittest.TestCase):
  
     # Tests the return code of the POST response
     #
-    def test_1(self, url=DEMO_URL, test_name="Test_post", negative=False):
-        logger.info("\n\nTest Name : %s" %test_name)
-        #Power off vm
+    def test_1(self, url=DEMO_URL, negative=False):
+        logger.info("Running the Migrate test cases")
+        #Power on vm
+        do_power_on(VM_NAME,VCENTER_IP)
+        #Perform fio in a file
+        vm_ip = get_ip(VCENTER_IP,USER_NAME,PASSWORD,VM_NAME,CLUSTER_NAME)
+        result = do_ios(vm_ip,username="root",pwd="root123",FIO_CONF)         
+
+        #take checksum of file
+        checksum = find_checksum(vm_ip,username="root",pwd="root123",file_name="")
+        #Power off VM  
         do_power_off(VM_NAME,VCENTER_IP)
+
+        #Migrate VM to cloud
         response = requests.post("%s%s" %(URL, url), json=self.data, headers=headers, verify=False)
         assert(response.status_code == 200)
-        
         logger.info("Status Code : %s" %response.status_code)
         if response.status_code == 200:
             time.sleep(100)
             assert(vm_present_on_vcenter(CLOUD_IP, VM_NAME), "%s not found on the cloud"%VM_NAME )
 
-    #
-    #Negative testing
-    #
-    def test_2(self, url=DEMO_URL, test_name="Negative testing", negative=False):
-        logger.debug("\n\nTest Name : %s" % test_name)
-        response = requests.post("%s%s" %(URL, url), json=self.data_invalid, headers=headers, verify=False)
-        logger.info("Negative test")
-        logger.info("Status Code : %s" %(response.status_code))
-        logger.info("Resp : %s" %(response.json()))
-        logger.info("%s Finished" % test_name)
-        assert(response.status_code != 200)
+        #Power ON VM
+        do_power_on(VM_NAME,VCENTER_IP)
 
+        #Check the checksum of file
+        vm_ip_cloud = get_ip(CLOUD_VCENTER_IP,USER_NAME,PASSWORD,VM_NAME,CLOUD_CLUSTER_NAME)
+        new_checksum = find_checksum(vm_ip_cloud,username="root",pwd="root123",file_name="")
+        assert checksum == new_checksum , "CHecksum is not matching"
 
-if __name__ == "__main__":
-    test_obj = AutoMigrateTest()
-    test_obj.test_1(DEMO_URL, "Test_post")
-    ##test_obj.test_2(DEMO_URL, "Test_post_response")
+    
