@@ -26,6 +26,8 @@ from unit_suite.lib_tcs import unit_tests
 from ui_suite.lib_tcs import ui_tests
 from sanity_suite.lib_tcs import sanity_tests
 from perf_suite.lib_tcs import perf_tests
+from cho.lib_tcs import cho_tests
+from locust_suite.lib_tcs import locust_tests
 import cp_global
         
 # Why am i spending so much time on help messages ? USUABILITY
@@ -47,6 +49,8 @@ def main():
         parser.add_argument("--scalability", help = "CP scalibility tests are run using Locust tool. \
                                 \nUse this option for stress tests and to setup test bed.\n\n", action="store_true")
         parser.add_argument("--ui", help="It runs UI test cases using selenium.\n\n", action="store_true")
+        parser.add_argument("--cho" , help = "It run CHO test cases(Migrate and Migrateback using checksum\n\n)", action ="store_true" )
+        parser.add_argument("--locust" , help = "It run locust related performance test\n\n)", action ="store_true" )
         parser.add_argument("--performance", help="TBD: Run performance tests\n\n", action="store_true")
         parser.add_argument("--showconfig", help="TBD:Show the default config values being used for the test.\n", action="store_true")
         parser.add_argument("--showTC", help="TBD: Describe the given TCs and its coverage areas.\n", action="store_true")
@@ -82,12 +86,20 @@ def main():
         elif args.performance:
                 print ("Running performance related testcases\n")
                 perf_tests.init_perf()
+        elif args.cho:
+                print("Running CHO related test cases \n")
+                cho_tests.init_cho()
+        elif args.locust:
+                print("Running Locust related test cases \n")
+                locust_tests.init_locust()
+
         elif args.failfirst:
                 print ("FAILFIRST")
                 exit(1)
         else: 
                 if len(sys.argv)==1:
                         parser.print_help(sys.stderr)
+
 
 
 if __name__ == "__main__":

@@ -1,15 +1,15 @@
-
 from pyVmomi import vim
 import urllib.request
 import requests
 from pyVim import connect
 import subprocess
 import ssl
+import atexit
 
 def get_obj(content, vimtype, name = None):
    return [item for item in content.viewManager.CreateContainerView(content.rootFolder, [vimtype], recursive=True).view]
 
-def connect_vcenter(host,user,pwd):
+def connect_to_vc(host,user,pwd):
    # Disabling urllib3 ssl warnings
    requests.packages.urllib3.disable_warnings()
 
@@ -30,12 +30,15 @@ def connect_vcenter(host,user,pwd):
    content = SI.RetrieveContent()
    return content
 
-def get_ip(host,user,pwd,vmname,cluster_name):
-   content = connect_vcenter(host,user,pwd)
-   cluster_name_found=False
-   vm_name_found = False
-   vm_ip= None
-   #print("Connection established")
+def rename_cluster(host,user,pwd,cluster_name,new_name):
+   content = connect_to_vc(host,user,pwd)
+   for cluster_obj in get_obj(content, vim.ComputeResource):
+      #print(cluster_obj.name)
+      if cluster_obj.name == cluster_name:
+         cluster_obj.Rename(new_name)
+
+def rename_vm(host,user,pwd,cluster_name,old_name, new_name):
+   content = connect_to_vc(host,user,pwd)
    for cluster_obj in get_obj(content, vim.ComputeResource):
       #print(cluster_obj.name)
       if cluster_obj.name == cluster_name:
@@ -44,34 +47,15 @@ def get_ip(host,user,pwd,vmname,cluster_name):
             #print(host.vm)
             for vm in host.vm:
                 #print(vm.name)
-                if vm.name == vmname:
+                if vm.name == old_name:
                     vm_name_found = True
-                    vm_ip = vm.summary.guest.ipAddress
-   return vm_ip
-
-def get_cluster_moid(host,user,pwd,cluster_name):
-
-   content = connect_vcenter(host,user,pwd)
-   cluster_name_found=False
-   vm_name_found = False
-   vm_ip= None
-   #print("Connection established")
-   for cluster_obj in get_obj(content, vim.ComputeResource):
-      #print(cluster_obj.name)
-      if cluster_obj.name == cluster_name:
-         cluster_name_found = True
-         #print(cluster_obj._GetMoId())
-   return cluster_obj._GetMoId()
-
-
-def get_all_cluster(host,user,pwd):
-   content = connect_vcenter(host,user,pwd)
-   cluster_list=[]
-   for cluster_obj in get_obj(content, vim.ComputeResource):
-      cluster_list.append(cluster_obj.name)
-   
-   return cluster_list
+                    vm.Rename(new_name)
+                    print(vm_name_found)
 
 
 
-#print(get_all_cluster("10.10.8.58","administrator@vsphere.local","Root@123"))
+
+
+
+#print(rename_vm("10.10.8.58","administrator@vsphere.local","Root@123","Cluster","VM5","VM8"))
+#print(rename_cluster("10.10.8.58","administrator@vsphere.local","Root@123","Cluster","test"))

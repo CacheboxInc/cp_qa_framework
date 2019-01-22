@@ -27,7 +27,7 @@ from logging.handlers import TimedRotatingFileHandler
 ##For logging
 log_info = logging.INFO
 log_debug = logging.DEBUG
-LOG_FILE = "%s/%s.log" % (os.getcwd(), "appliance")
+LOG_FILE = "%s/%s.log" % (os.getcwd(), "global_logs/appliance")
 LOG_ROTATION_TIME = 'W2'
 
 formatter1 = logging.Formatter('%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
@@ -40,7 +40,7 @@ dlr.setLevel(log_info)
 dlr.setFormatter(formatter1)
 logger.addHandler(dlr)
 
-fh2 = logging.FileHandler('sanity_suite/logs_tcs/result.txt')
+fh2 = logging.FileHandler('global_logs/result.txt')
 fh2.setLevel(log_info)
 fh2.setFormatter(formatter2)
 logger.addHandler(fh2)
