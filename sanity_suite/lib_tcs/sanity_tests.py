@@ -10,6 +10,7 @@ import time
 from time import strftime, gmtime
 from configparser import SafeConfigParser
 from sanity_suite.conf_tcs.config import *
+from sanity_suite.conf_tcs.config import logger
 
 cwd = os.getcwd()
 config = SafeConfigParser()
@@ -52,7 +53,7 @@ def run_tests():
 
 
 
-
+"""
 # Currently, logging happens at the test suite level.
 # TBD : TC Level logging and process level logging
 def get_logger():
@@ -99,4 +100,4 @@ def get_logger():
 
         logger.info("Setting up and Returning Sanity test suite logger")
         return logger
-
+"""
