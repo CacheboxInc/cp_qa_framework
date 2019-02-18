@@ -19,6 +19,7 @@ from sanity_suite.conf_tcs.config import *
 from global_conf.config import logger
 from sanity_suite.lib_tcs.utils import *
 from global_utils.vmware_utils.vm_utils_rest import *
+from global_utils.vmware_utils.renamer import *
 
 requests.packages.urllib3.disable_warnings()
 
@@ -32,7 +33,11 @@ class planning_Test(unittest.TestCase):
 
    def test_1_vm_count(self):
       logger.info("Running Number of VM test cases")
-      expected_count = len(get_vms_vcenter(VCENTER_IP))
+      vm_names = get_vms_vcenter(VCENTER_IP,VCENTER_USERNAME,VCENTER_PASSWORD)
+      if "PrimaryIO-OnPrem-Manager-0" in vm_names:
+         vm_names.remove("PrimaryIO-OnPrem-Manager-0")
+      expected_count = len(vm_names)
+
       logger.info("Total vm present on the Onprem Vcenter : %s"%expected_count)
       response = requests.get("%s%s" %(URL, url), headers=headers, verify=False)
       assert response.status_code == 200 , "Response code is not 200" 
@@ -40,7 +45,7 @@ class planning_Test(unittest.TestCase):
       vm_list = profile_page_response["data"]["vmc"]["resource_assesment"]
       actual_count = len(vm_list)
       logger.info("Total vm present on the On cloud burst page : %s"%actual_count)
-      assert expected_count == (actual_count+1) , "Vm count on vcenter and appliance is not matching"
+      assert expected_count == (actual_count) , "Vm count on vcenter and appliance is not matching"
 
    def test_2_primaryio_component(self):
       logger.info("Runningtest cases for checking primaryIO compenents are not listed in VM lists")
@@ -59,8 +64,9 @@ class planning_Test(unittest.TestCase):
    
    def test_3_vm_count(self):
       logger.info("Running Number of VM test cases")
-      expected_names = get_vms_vcenter(VCENTER_IP)
-      expected_names.remove("PrimaryIO-OnPrem-Manager-0")
+      expected_names = get_vms_vcenter(VCENTER_IP, VCENTER_USERNAME,VCENTER_PASSWORD)
+      if "PrimaryIO-OnPrem-Manager-0" in vm_names:
+         vm_names.remove("PrimaryIO-OnPrem-Manager-0")
       expected_names.sort()
       logger.info("Total vm present on the Onprem Vcenter : %s"%expected_names)
       print("Total vm present on the Onprem Vcenter : %s"%expected_names)
@@ -76,4 +82,53 @@ class planning_Test(unittest.TestCase):
       assert expected_names==vm_names , "Vm count on vcenter and appliance is not matching"
 
 
+   def test_4_rename_cluster(self):
+      logger.info("Running test cases: verify correct names are getting displayed on renaming of cluster")
+      expected_names = get_vms_vcenter(VCENTER_IP, VCENTER_USERNAME,VCENTER_PASSWORD,cluster_moid)
+      if "PrimaryIO-OnPrem-Manager-0" in expected_names:
+           expected_names.remove("PrimaryIO-OnPrem-Manager-0")
+      expected_names.sort()
+      logger.info("Total vm present on the Onprem Vcenter : %s"%expected_names)
+      print("Total vm present on the Onprem Vcenter : %s"%expected_names)
+      rename_cluster_name = "test"
+      #renaming cluster name
+      rename_cluster(VCENTER_IP, VCENTER_USERNAME,VCENTER_PASSWORD,VCENTER_CLUSTER,rename_cluster_name)
+      time.sleep(2)
+      response = requests.get("%s%s" %(URL, url), headers=headers, verify=False)
+      assert response.status_code == 200 , "Response code is not 200"
+      profile_page_response = json.loads(response.text)
+      total_resources = profile_page_response["data"]["vmc"]["resource_assesment"]
+      vm_names=[]
+      for resource in total_resources:
+         vm_names.append(resource["name"])
+      vm_names.sort()
+      logger.info("Total vm present on the profiling page i post renaming: %s"%vm_names)
+      rename_cluster(VCENTER_IP, VCENTER_USERNAME,VCENTER_PASSWORD,rename_cluster_name,VCENTER_CLUSTER)
+      assert expected_names==vm_names , "VM names are not matching post renaming cluster"
+
+   def test_5_rename_vm(self):
+      logger.info("Verify correct VM names are getting reflected on renamin a VM")
+      expected_names = get_vms_vcenter(VCENTER_IP, VCENTER_USERNAME,VCENTER_PASSWORD)
+      if "PrimaryIO-OnPrem-Manager-0" in expected_names:
+           expected_names.remove("PrimaryIO-OnPrem-Manager-0")
+      expected_names.sort()
+      old_name  = expected_names[1]
+      new_name = old_name+"dummy"
+      rename_vm(VCENTER_IP, VCENTER_USERNAME,VCENTER_PASSWORD,VCENTER_CLUSTER,old_name,new_name)
+      logger.info("Total vm present on the Onprem Vcenter : %s"%expected_names)
+      print("Total vm present on the Onprem Vcenter : %s"%expected_names)
+      #renaming cluster name
+      time.sleep(2)
+      response = requests.get("%s%s" %(URL, url), headers=headers, verify=False)
+      assert response.status_code == 200 , "Response code is not 200"
+      profile_page_response = json.loads(response.text)
+      total_resources = profile_page_response["data"]["vmc"]["resource_assesment"]
+      vm_names=[]
+      for resource in total_resources:
+         vm_names.append(resource["name"])
+      vm_names.sort()
+      logger.info("Total vm present on the cloudburst planning page post renaming: %s"%vm_names)
+      rename_vm(VCENTER_IP, VCENTER_USERNAME,VCENTER_PASSWORD,VCENTER_CLUSTER,new_name,old_name)
+
+      assert new_name in vm_names, "Rename VM is not listed in the appliance VM list"
 

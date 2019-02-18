@@ -23,7 +23,7 @@ def get_vms(vcip):
         vms=s.get('https://'+vcip+'/rest/vcenter/vm/')
         return vms
 
-def get_vms(vcip,cluster):
+def get_vms_clust(vcip,cluster):
         vms=s.get('https://'+vcip+'/rest/vcenter/vm?filter.clusters='+cluster)
         return vms
  
@@ -47,8 +47,8 @@ def get_vm_state(vmmoid , vcip):
 	print(url)
 	return data
 
-def do_power_off(vmname, vcip):
-	get_vc_session(vcip,"Administrator@vsphere.local","Root@123")
+def do_power_off(vcip,username,password,vmname):
+	get_vc_session(vcip,username,password)
 	vms = get_vms(vcip)
 	vm_response=json.loads(vms.text)
 	json_data=vm_response["value"]
@@ -66,8 +66,8 @@ def do_power_off(vmname, vcip):
 				time.sleep(45)               
 				#print(get_ip_address(vm.get("name"),vcip))
 
-def do_power_on(vmname, vcip):
-        get_vc_session(vcip,"Administrator@vsphere.local","Root@123")
+def do_power_on(vcip,user,password,vmname):
+        get_vc_session(vcip,user,password)
         vms = get_vms(vcip)
         vm_response=json.loads(vms.text)
         json_data=vm_response["value"]
@@ -94,9 +94,9 @@ def get_ip_address(vmmoid , vcip):
 	return data
 
 
-def get_vms_vcenter(vcip):
+def get_vms_vcenter(vcip,user,password):
 	#Get vCenter server session and can be used as needed. pass vcenter username & password
-	vcsession = get_vc_session(vcip,"Administrator@vsphere.local","Root@123")
+	vcsession = get_vc_session(vcip,user,password)
 	#print(vcsession)
 	li = []
 	#Get all the VMs from inventory using below method from "vcrest" module.
@@ -118,7 +118,7 @@ def get_vms_cluster(vcip,user,password,cluster):
     #print(vcsession)
     li = []
     #Get all the VMs from inventory using below method from "vcrest" module.
-    vms = get_vms(vcip,cluster)
+    vms = get_vms_clust(vcip,cluster)
     response=json.loads(vms.text)
     print (response["value"])
     value = response["value"]
@@ -129,8 +129,8 @@ def get_vms_cluster(vcip,user,password,cluster):
     return li
 
 
-def vm_present_on_vcenter(vcip , vm_name):
-	vms = get_vms_vcenter(vcip)
+def vm_present_on_vcenter(vcip ,user,password, vm_name):
+	vms = get_vms_vcenter(vcip,user,password)
 	#print(vms)
 	if vm_name in vms:
 		return True

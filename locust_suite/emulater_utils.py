@@ -12,7 +12,7 @@ from math import ceil
 from collections import OrderedDict
 from browsermobproxy import Server
 
-TOTAL_APA_VMDK_PER_VM = 3
+TOTAL_APA_VMDK_PER_VM =  3
 TOTAL_VMDK_PER_VM = 3
 
 #Adding apa_stats to the emulated VMDK data
@@ -127,13 +127,16 @@ class Emulater(object):
         '''
         read_iostats = self.emulate_iotraces()
         write_iostats = self.emulate_iotraces()
+        disk_iostats = self.generate_new_disk_mrc_stats()
+
         vmdk_rw_str["tag"] = 1520848915824
         vmdk_rw_str["vmdk_id"] = "{0}_6000C2960dc48023d865148fe29fd46f_{1}".format(vmdk_id, VM_NAME)
         vmdk_rw_str["ds_uuid"] = "599f3f98-0a0b3022-5a5b-0050568be972g{}".format(VM_NAME)
         vmdk_rw_str["vm_id"] =  "192168188_421585f13fb7cd3480a2f1461b1a3a44_{}".format(VM_NAME)
         vmdk_rw_str["read_iostats"] = read_iostats
         vmdk_rw_str["write_iostats"] = write_iostats
-        vmdk_rw_str["with_apa"] = with_apa_stats
+        vmdk_rw_str["disk_iostats"] = disk_iostats
+        #vmdk_rw_str["with_apa"] = with_apa_stats
 
         return vmdk_rw_str
 
@@ -151,14 +154,17 @@ class Emulater(object):
         apa_with_vmdk = TOTAL_APA_VMDK_PER_VM
 
         for vm_name in VM_NAME_PATT[1:]:
-            with_apa_stats = True
+            with_apa_stats = False
             for i in range(0, max_vmdk):
                 vmdk_rw_str = OrderedDict()
                 vmdk_id = ''.join([random.choice('0123456789') for k in range(10)])
+
+                '''
                 if i > apa_with_vmdk:
                     with_apa_stats = False
+                '''
                 vmdk  = self.emulate_vmdk(vmdk_rw_str, vmdk_id, vm_name, with_apa_stats)
-                self.vmdk_dict[str(count)] = vmdk
+                self.vmdk_dict[str(count)] = json.dumps(vmdk)
                 count += 1
 
         return self.vmdk_dict
@@ -190,21 +196,38 @@ class Emulater(object):
         stats_min['sum_qd'] = random.choice(range(0,100))
         stats_min['blocksize_hist'] = [random.choice(blk_sz_histogram_list) for i in range(12)]
         stats_min['latency_hist'] = [random.choice(lat_histogram) for i in range(12)]
-        stats_min['l1_unique'] = random.choice(blk_sz_histogram_list)
-        stats_min['l1_sdq'] = random.choice(range(0,100))
-        stats_min['l1_mrc'] = [random.choice(range(100)) for i in range(60)]
+        stats_min['unique'] = random.choice(blk_sz_histogram_list)
+        stats_min['sdq'] = random.choice(range(0,100))
+        stats_min['mrc'] = [random.choice(range(100)) for i in range(60)]
         
         #Storing the emulated IO traces in the stats_max dictonary
         stats_max['l1_stats'] = stats_min
-        stats_max['l2_stats'] = {'l2_unique': random.choice(blk_sz_histogram_list),
-                                 'l2_sdq': random.choice(range(0,100)), 
-                                 'l2_mrc': [random.choice(range(100)) for i in range(60)]
+        stats_max['l2_stats'] = {'unique': random.choice(blk_sz_histogram_list),
+                                 'sdq': random.choice(range(0,100)), 
+                                 'mrc': [random.choice(range(100)) for i in range(60)]
                                 }
-        stats_max_data = json.dumps(stats_max)
+        #stats_max_data = json.dumps(stats_max)
 
-        return stats_max_data
-    
-    def creat_new_vmdk_data(self, old_vmdk, apa_vmkd_perc):
+        return stats_max
+   
+    def generate_new_disk_mrc_stats(self) :
+        stats_max = {}
+        stats_min = {}
+
+        blk_sz_histogram_list = [512, 4096, 8192]
+        stats_min['unique'] = random.choice(blk_sz_histogram_list)
+        stats_min['sdq'] = random.choice(range(0,100))
+        stats_min['mrc'] = [random.choice(range(100)) for i in range(60)]
+        
+        #Storing the emulated IO traces in the stats_max dictonary
+        stats_max['l1_stats'] = stats_min
+        stats_max['l2_stats'] = {'unique': random.choice(blk_sz_histogram_list),
+                                 'sdq': random.choice(range(0,100)), 
+                                 'mrc': [random.choice(range(100)) for i in range(60)]
+                                }
+        return stats_max
+
+    def create_new_vmdk_data(self, old_vmdk, apa_vmkd_perc):
         '''
         This method update the already created vmdk with new Read and Write IO stats values
         '''
@@ -214,6 +237,8 @@ class Emulater(object):
         vmdk_with_apa = TOTAL_APA_VMDK_PER_VM # ceil(len(old_vmdk.items()) * (apa_vmkd_perc/ 100))
 
         for key, vmdk_d in old_vmdk.items():
+
+            vmdk_d = json.loads(vmdk_d)
             new_vmdk = OrderedDict()
             new_vmdk["tag"] = vmdk_d["tag"]
             new_vmdk["vmdk_id"] = vmdk_d["vmdk_id"]
@@ -221,6 +246,7 @@ class Emulater(object):
             new_vmdk["vm_id"] = vmdk_d["vm_id"]
             new_vmdk["read_iostats"] = self.emulate_iotraces()
             new_vmdk["write_iostats"] = self.emulate_iotraces()
+            new_vmdk["disk_iostats"] = self.generate_new_disk_mrc_stats()
 
             '''
             if i < vmdk_with_apa:
@@ -229,7 +255,7 @@ class Emulater(object):
             '''
 
             i += 1 
-            new_vmdk_data[key] = new_vmdk
+            new_vmdk_data[key] = json.dumps(new_vmdk)
 
         return new_vmdk_data
             
@@ -295,6 +321,7 @@ class Emulater(object):
         '''
         vmdk_data = None
         return vmdk_data
+
         vmdk_name = str(usr_id) + "_vmdk.db"
         dir_path = os.path.join(os.getcwd(), self.dir_name)
         vmdk_files =  os.listdir(dir_path)

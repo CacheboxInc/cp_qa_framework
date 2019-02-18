@@ -11,6 +11,7 @@ from time import strftime, gmtime
 from configparser import SafeConfigParser
 from sanity_suite.conf_tcs.config import *
 from sanity_suite.conf_tcs.config import logger
+from global_utils.email_util import *
 
 cwd = os.getcwd()
 config = SafeConfigParser()
@@ -24,18 +25,8 @@ start_time = strftime("%Y%m%d%H%M", gmtime())
 def init_sanity():
     # TBD : Move this to common framework lib and pass flags like mrc, sanity etc.
     
-    # Phase 1: Test bed/environment configuration validation.
-    #deploy_test_vms(logger)
-    # Phase 2: We now have a test bed to execute MRC test cases.
     run_tests()
 
-    # Phase 3: Test Suite execution report.
-    #report_mgmt_update()
-    
-    # Phase 4: Cleanup of test setup.
-    #shiva_the_destructor()
-
-##common function to start execution.
 def run_tests():
         #config.read(config_file)
         #tc_dir = cwd+config.get('setup', 'tc_dir')
@@ -48,7 +39,10 @@ def run_tests():
         logger.info("test case directory : %s", cwd+TC_DIR)
 	##Calling pytest function for executing the test
         os.system("python3 -m pytest %s -s -v --tb=auto -l --html=%s -n %s --junitxml=%s" % (cwd+TC_DIR , report_file , NODES , xml_report_dir  ))
-        os.system("scp %s %s" %(report_file , REPORT_LOCATION_SERVER))
+        os.system("scp %s %s@%s:%s" %(report_file ,SERVER_USER,REPORT_LOCATION_SERVER, REPORT_LOCATION))
+        time.sleep(5)
+        link = "http://%s/%s/%s"%(REPORT_LOCATION_SERVER,REPORT_LOCATION,start_time +".html")
+        send_mail(link,EMAIL_IDS)
 
 
 

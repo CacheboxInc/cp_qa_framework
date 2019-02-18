@@ -17,7 +17,7 @@ import traceback
 from cho.conf_tcs.config import *
 from global_utils.vmware_utils.vm_utils_rest import *
 from global_utils.vmware_utils.vm_details import get_ip
-from global_utils.cmd_runner_para import run_cmd
+from global_utils.cmd_runner import run_cmd
 from global_conf.config import logger
 
 
@@ -29,7 +29,7 @@ MIGRATE_BACK_URL = "/automigrateback"
 URL      = URL % (APPLIANCE_IP)
 headers = {'Content-type': 'application/json'}
 
-ITERATION_COUNT=50
+ITERATION_COUNT=2
 
 
 class Migrate_CHO_Test(unittest.TestCase):
@@ -53,7 +53,7 @@ class Migrate_CHO_Test(unittest.TestCase):
             logger.info("********************Running "+str(x)+" iteration************************")
             print("********************Running "+str(x)+" iteration************************")
             #Power on vm
-            do_power_on(VM_NAME,VCENTER_IP)
+            do_power_on(VCENTER_IP,VCENTER_USERNAME,VCENTER_PASSWORD,VM_NAME)
 			#Perform fio in a file
             vm_ip = get_ip(VCENTER_IP,VCENTER_USERNAME,VCENTER_PASSWORD,VM_NAME,VCENTER_CLUSTER)
             print("VM IP on prem: %s"%vm_ip)
@@ -65,7 +65,7 @@ class Migrate_CHO_Test(unittest.TestCase):
             logger.info("On prem file checksum : %s"%checksum)
             print("On prem file checksum : %s"%checksum)
             #Power off VM  
-            do_power_off(VM_NAME,VCENTER_IP)
+            do_power_off(VCENTER_IP,VCENTER_USERNAME,VCENTER_PASSWORD,VM_NAME)
             logger.info("Migrating VM to cloud")
             #Migrate VM to cloud
             print("Migrating VM to cloud")
@@ -77,10 +77,10 @@ class Migrate_CHO_Test(unittest.TestCase):
 
             if response.status_code == 200:
                 time.sleep(150)
-                assert(vm_present_on_vcenter(CLOUD_IP, VM_NAME), "%s not found on the cloud"%VM_NAME )
+                assert(vm_present_on_vcenter(CLOUD_IP,VCENTER_USERNAME,VCENTER_PASSWORD, VM_NAME), "%s not found on the cloud"%VM_NAME )
 
                 #Power ON VM
-                do_power_on(VM_NAME,CLOUD_IP)
+                do_power_on(CLOUD_IP,VCENTER_USERNAME,VCENTER_PASSWORD,VM_NAME)
 
                 #Check the checksum of file
                 print("Find checksum of file on cloud")
@@ -91,7 +91,7 @@ class Migrate_CHO_Test(unittest.TestCase):
                 assert checksum == new_checksum , "Checksum is not matching"
                 print("Migrating VM back to on prem")
                 logger.info("Mirating back VM")
-                do_power_off(VM_NAME,CLOUD_IP)
+                do_power_off(CLOUD_IP,VCENTER_USERNAME,VCENTER_PASSWORD,VM_NAME)
                 response = requests.post("%s%s" %(URL, MIGRATE_BACK_URL), json=self.data_migrate_back, headers=headers, verify=False)
                 assert(response.status_code == 200 , "Migrate back failed")
                 logger.info("Status Code of migrate back: %s" %response.status_code)

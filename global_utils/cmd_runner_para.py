@@ -18,6 +18,6 @@ def run_cmd(hostname, username, password,cmd):
 	ssh.close()
 
 
-temp2 = run_cmd("10.10.96.81","root","root123",CKSUM_CMD)
+#temp2 = run_cmd("10.10.96.81","root","root123",CKSUM_CMD)
 #tempi = run_cmd("10.10.96.81","root","root123",FIO_CMD)
-print(temp2)
+#print(temp2)

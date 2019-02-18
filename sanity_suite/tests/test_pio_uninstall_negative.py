@@ -14,140 +14,6 @@ pio = PIOAppliance()
 MOD_SETUP_ERROR = ""
 VCENTER_IP= SANITY_VCENTER_IP
 
-def setUpModule():
-    global MOD_SETUP_ERROR
-
-    pio.login()
-
-    # Add vCenter
-    vc_cred = { 'username': VCENTER_USERNAME,
-                'ip': VCENTER_IP,
-                'password': VCENTER_PASSWORD,
-                'force_add': 0}
-
-    ret = pio.add_vcenter(vc_cred)
-    if ret is False:
-        MOD_SETUP_ERROR = "Failed to add vCenter"
-        return
-
-    # Get vCenters
-    vcenter_list = pio.get_vcenters()
-    vc_id = None
-
-    if not vcenter_list:
-        MOD_SETUP_ERROR = "Failed to get vCenter list"
-        return
-
-    for vc in vcenter_list:
-        if vc.get('vcenter_ip') == VCENTER_IP:
-            vc_id = vc.get('id')
-            break
-
-    if vc_id is None:
-        MOD_SETUP_ERROR = "Failed to get vCenter ID"
-        return
-
-    # Install vib
-
-    cluster_name = ",".join(CLUSTER_NAMES)
-
-    vc_data = { 'vcenter_id': vc.get('id'),
-                'cluster_name': cluster_name
-              }
-
-    ret = pio.install(vc_data)
-
-    if ret is False:
-        MOD_SETUP_ERROR = "Failed to install vib"
-        return
-
-    # Configure clusters/hosts
-    for cluster in CLUSTER_NAMES:
-        cluster_data = { 'vcenter_id': vc.get('id'),
-                        'cluster_name': cluster
-                       }
-
-        cluster_config = pio.get_cluster_config(cluster_data)
-        selected_config = {}
-
-        if cluster_config is None:
-            MOD_SETUP_ERROR = "Failed to get cluster config info"
-            return
-
-        for conf in list(cluster_config.values()):
-            for host in conf:
-                selected_config[host['ip']] = {'addr': host['ip'], 'fd': 'default', 'enable_fd': 'True'}
-
-        if not selected_config:
-            MOD_SETUP_ERROR = "No config is selected for cluster configuration"
-            return
-
-        clust_config_data = { 'vcenter_id': vc_id,
-                              'cluster_name': cluster,
-                              'selected_config': selected_config
-                            }
-
-        ret = pio.configure_cluster(clust_config_data)
-        if ret is False:
-            MOD_SETUP_ERROR = "Failed to configure cluster %s" % cluster
-            return
-
-    # Reigster Plugin
-    ret = pio.register({'vcenter_id': vc_id})
-
-    if ret is False:
-        MOD_SETUP_ERROR = "Failed to register plugin"
-        return
-
-
-def tearDownModule():
-
-    pio.login()
-
-    # Get vCenters
-    vcenter_list = pio.get_vcenters()
-    vc_id = None
-
-    if not vcenter_list:
-        logger.error("Failed to get vCenter list")
-        return
-
-    for vc in vcenter_list:
-        if vc.get('vcenter_ip') == VCENTER_IP:
-            vc_id = vc.get('id')
-            break
-
-    if vc_id is None:
-        logger.error("Failed to get vCenter ID")
-        return
-
-    # Uninstall vib
-
-    cluster_name = ",".join(CLUSTER_NAMES)
-
-    vc_data = { 'vcenter_id': vc.get('id'),
-                'cluster_name': cluster_name
-              }
-
-    ret = pio.uninstall(vc_data)
-
-    if ret is False:
-        logger.error("Failed to uninstall vib in tearDownModule")
-        return
-
-    # Unregister Plugin
-    ret = pio.unregister({'vcenter_id': vc_id})
-
-    if ret is False:
-        logger.error ("Failed to unregister plugin in tearDownModule")
-        return
-
-    # Delete vCenter
-    ret = pio.delete_vcenter({'force_delete': 0, 'id': vc_id})
-    if ret is False:
-        logger.error("Failed to delete vCenter in tearDownModule")
-
-    return
 
 class PioUninstallNegative(QAMixin, unittest.TestCase):
     '''
@@ -158,9 +24,6 @@ class PioUninstallNegative(QAMixin, unittest.TestCase):
         super(PioUninstallNegative, self).__init__(*args, **kwargs)
         self.pio = PIOAppliance()
 
-    def setUp(self):
-        sys.stdout.write("\r")
-        self.pio.login()
 
     def test_uninstall_wrong_cluster(self):
         '''
@@ -180,7 +43,7 @@ class PioUninstallNegative(QAMixin, unittest.TestCase):
             return
 
         for vc in vcenter_list:
-            if vc.get('vcenter_ip') == VCENTER_IP:
+            if vc.get('vcenter_ip') == _sanity_VCENTER_IP:
                 vc_id = vc.get('id')
                 break
 

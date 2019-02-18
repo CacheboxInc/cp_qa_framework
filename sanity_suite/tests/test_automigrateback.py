@@ -51,7 +51,7 @@ class AutoMigrateBackTest(unittest.TestCase):
         logger.info("Status Code : %s" %response.status_code)
         if response.status_code == 200:
             time.sleep(100)
-            assert(vm_present_on_vcenter(CLOUD_IP, VM_NAME)==False , "VM is not migrated back to ON prem")
+            assert(vm_present_on_vcenter(CLOUD_IP,CLOUD_USERNAME,CLOUD_PASSWORD,VM_NAME)==False , "VM is not migrated back to ON prem")
 
 
     #
@@ -66,7 +66,3 @@ class AutoMigrateBackTest(unittest.TestCase):
         logger.info("%s Finished" % test_name)
         assert(response.status_code != 200)
 
-if __name__ == "__main__":
-    test_obj = AutoMigrateBackTest()
-    test_obj.test_1(DEMO_URL, "Test_post")
-    test_obj.test_2(DEMO_URL, "Test_post_response")

@@ -58,6 +58,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         logger.info(resp)
         assert ret == 201, "Vcenter is not added successfully"
 
+
     def test_02_re_add_existing_vcenter(self):
         '''
             Test which will try to re-add already added vCenter
@@ -160,7 +161,7 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         '''
         Add vcenter with invalid IP to the PIO_Appliance
         '''
-        INVALID_VC_IP = '169.168.2.1'
+        INVALID_VC_IP = '169.168.0.0'
         err_msg = "Error: PM-141: Please ensure that vCenter {} is reachable from the appliance.".format(INVALID_VC_IP)
         data = {
                 'username': VCENTER_USERNAME,
@@ -231,7 +232,33 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         #do_pass(self, 'test_07_add_vcenter_invalid_pwd', rc == 500)
         assert rc == 500 
 
-    def test_08_force_delete_vcenter(self):
+    def test_07_add_vcenter_invalid_credentials(self):
+        '''
+        Add vcenter with wrong user_id
+        '''
+        err_msg = "Please check the credentials for vCenter {}.".format(SANITY_VCENTER_IP)
+        data = {
+                'username': 'test',
+                'ip': '10.10.0.0',
+                'password': "%s_rand_string"%VCENTER_PASSWORD,
+                'force_add': 0,
+                'cloudburst_tag': CLOUDBURST_TAG,
+                'workload_tag': WORKLOAD_TAG,
+                'dtype': 0,
+
+               }
+        res = self.pio.post(self.vcenter_url, data)
+        ret = json.loads(res.read().decode('utf-8'))
+        ret_msg = ret['msg']
+        assert(ret_msg == err_msg ,"Proper error message is not getting displayed"  )
+        logger.debug(self.vcenter_url)
+        logger.debug(ret)
+        rc = res.getcode()
+        #do_pass(self, 'test_07_add_vcenter_invalid_pwd', rc == 500)
+        assert rc == 500
+
+
+    def test_09_force_delete_vcenter(self):
         '''
             Test which would test delete vCenter PIO operation
             1.Add Vcenter
@@ -273,10 +300,4 @@ class AddRemoveVcenter(QAMixin, unittest.TestCase):
         rc = res.getcode()
         #do_pass(self, 'test_08_force_delete_vcenter', rc == 200 or rc == 503)
         assert rc == 200 
-        
-        
-if __name__ == "__main__":
-    optlist, cmd_args = getopt.getopt(sys.argv[1:], '')
-    args, logfolder = cmd_args
-    args = [] if args=='none' else [args]
-    unittest.main(argv=["add_delete_vcenter.py"] + args)
+

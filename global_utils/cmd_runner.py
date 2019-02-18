@@ -21,7 +21,7 @@ def run_cmd(ip,user,password,cmd):
 
 
 #print(do_fio("10.10.144.205","root","root123",FIO_CMD))
-temp1 = run_cmd("10.10.96.81","root","root123",FIO_CMD)
+#temp1 = run_cmd("10.10.96.81","root","root123",FIO_CMD)
 #print(do_fio("10.10.144.205","root","root123",CKSUM_CMD))
 #temp2 = do_fio("10.10.144.205","root","root123",CKSUM_CMD)
 

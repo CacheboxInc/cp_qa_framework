@@ -8,6 +8,7 @@ from pyVmomi import vmodl
 from pyVmomi import vim
 from sanity_suite.tests.vim_utils import *
 from sanity_suite.tests.pbm_utils import *
+from sanity_suite.conf_tcs.config import logger
 
 import warnings
 
@@ -117,7 +118,7 @@ class GetCloudDetailsQA(QAMixin, unittest.TestCase):
                                    'password': CLOUD_PASSWORD,
                                    'force_add': 0,
                                    'dtype': 8,
-                                   'appliance_ip': CLOUD_APPLIANCE_IP,
+                                   'appliance_ip': APPLIANCE_IP,
                                    'name' : "cloud_vcenter",
                                    'location' : "oregano",
                                    'global_username': CLOUD_USER_NAME,
@@ -133,8 +134,8 @@ class GetCloudDetailsQA(QAMixin, unittest.TestCase):
         requests.post(url, json=self.cloud_details_data, verify=False, headers=headers)
 
     def test_01_validate_cloud_details(self):
-        self.add_cloud_details()
-
+        """self.add_cloud_details()"""
+        logger.info("Running cloud details validation test cases")
         resp = self.pio.get(self.get_cloud_details_url)
         resp = json.loads(resp.read().decode('utf-8'))
 
@@ -142,20 +143,18 @@ class GetCloudDetailsQA(QAMixin, unittest.TestCase):
         if int(status.get("status", 1)) != 0:
             print("failed to fetch cloud details\n")
             return
-
+        logger.info("Status of the rest call: %s" %(str(resp.get("status"))))
         data = resp.get("data", {})
         cloud_data = data.get(self.cloud_type, {})[0]
 
         cloud_resource_stats = self.collect_cloud_resources_stats(CLOUD_IP, CLOUD_USER_NAME, CLOUD_PASSWORD)
-
-        assert(cloud_data["available"]["memory"] == cloud_resource_stats["available"]["memory"])
-        assert(cloud_data["available"]["vcpu"] == cloud_resource_stats["available"]["compute"])
+        logger.info(cloud_data)
+        assert (cloud_data["available"]["memory"] == cloud_resource_stats["available"]["memory"])
+        assert (cloud_data["available"]["vcpu"] == cloud_resource_stats["available"]["compute"])
 
         total_memory = cloud_resource_stats["available"]["memory"] + cloud_resource_stats["used"]["memory"]
         total_vcpu   = cloud_resource_stats["available"]["compute"] + cloud_resource_stats["used"]["compute"]
 
-        assert(cloud_data["total"]["memory"] == total_memory)
-        assert(cloud_data["total"]["vcpu"] == total_vcpu)
+        assert (cloud_data["total"]["memory"] == total_memory)
+        assert (cloud_data["total"]["vcpu"] == total_vcpu)
 
-if __name__ == "__main__":
-    unittest.main(argv=["get_cloud_details_test.py"])

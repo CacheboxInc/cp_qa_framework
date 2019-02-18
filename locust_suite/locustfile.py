@@ -108,10 +108,11 @@ class IOABehavior(TaskSet):
         Execute the POST calls to the nginx server with emulated vmdk data
         '''
         if self.update_stats:
-            self.vmdk_data = self.emu.creat_new_vmdk_data(self.vmdk_data, APA_VMDK_COUNT_PERC)
+            self.vmdk_data = self.emu.create_new_vmdk_data(self.vmdk_data, APA_VMDK_COUNT_PERC)
 
         greens = []
-        data = json.dumps(self.vmdk_data)
+        data = json.dumps({ 'data' : self.vmdk_data})
+        #print(data)
         response = self.client.post("%s/%s" % (POST_STATS, self.vm_id), data, name="POST_STATS", proxies=PROXIES)
         if not response.ok:
             self.logger.error(response.text) # TODO add status code, url, and reponse to the log

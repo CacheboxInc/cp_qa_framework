@@ -7,7 +7,7 @@ XML_REPORT_DIR = "/cho/logs_tcs/"
 
 REPORT_LOCATION_SERVER = "drugesh@192.168.3.96:"
 #Main SetUP
-APPLIANCE_IP = "10.10.96.1"
+APPLIANCE_IP = "10.10.111.134"
 APP_USERNAME = "administrator@pio.com"
 APP_PASSWORD = "admin@123"
 
@@ -20,7 +20,7 @@ VCENTER_PASSWORD = "Root@123"
 VCENTER_CLUSTER = "Cluster"
 
 #VM Details
-VM_NAME = ["test_VM11"]
+VM_NAME = "test_VM2"
 USERNAME = "root"
 PASSWORD = "root123"
 POWERON_FLAG = "FALSE"

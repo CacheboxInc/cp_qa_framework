@@ -10,3 +10,5 @@ assertpy==0.14
 httmock==1.2.6
 selenium==3.141.0
 pyvmomi==6.7.0.2018.9
+locustio
+browsermob-proxy
